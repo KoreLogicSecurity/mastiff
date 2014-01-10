@@ -1,0 +1,10 @@
+[Core]
+Name = pdfid
+Module = PDF-pdfid
+
+[Documentation]
+Description = Run Didier Stevens' pdfid.py script
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

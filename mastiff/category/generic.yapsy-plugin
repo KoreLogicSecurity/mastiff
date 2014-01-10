@@ -1,0 +1,10 @@
+[Core]
+Name = Generic Category
+Module = generic
+
+[Documentation]
+Description = Generic Files Category Plugin
+Author = Tyler Hudak
+Website = www.korelogic.com
+Version = 1.0
+License = Apache License, Version 2.0

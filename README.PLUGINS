@@ -1,0 +1,29 @@
+
+REVISION
+
+  $Id: README.PLUGINS,v 1.2 2013/02/13 16:11:16 klm Exp $
+
+SKELETON PLUG-INS
+
+  The project's skeleton directory contains three types of skeleton
+  plug-ins that can be used to start coding your own plug-ins for the
+  framework.  Just choose the skeleton code for the type of plug-in
+  you would like to develop, modify a few lines, and start coding.
+  Note that these files are intended to serve as examples and helpful
+  hints on how to get started, not as definitive ways to create
+  plug-ins.
+
+  The three types skeleton plug-ins are:
+
+  - category-skel: A skeleton category plug-in to define a new
+    file type.
+
+  - analysis-skel: A skeleton analysis plug-in to define a new
+    type of analysis.  This code is for a Generic plug-in, but can be
+    easily modified for any file-type category.
+
+  - analysis-ext-skel: A skeleton analysis plug-in to define a new
+    type of analysis that calls an external program.  This type of
+    plug-in is excellent for acting as a wrapper script around another
+    program.
+

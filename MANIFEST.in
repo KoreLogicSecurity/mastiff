@@ -1,0 +1,18 @@
+include *.py
+include *.yapsy-plugin
+include docs/*.pdf
+include pylint.rc
+include Makefile
+include README
+include README.CREDITS
+include README.INSTALL
+include README.LICENSE
+include README.PLUGINS
+include mastiff.conf
+include skeleton/*.py
+include skeleton/*.yapsy-plugin
+include tests/*
+include utils/*
+exclude README.RELENG
+recursive-exclude docs *.odt
+recursive-include plugins *.py *.yapsy-plugin

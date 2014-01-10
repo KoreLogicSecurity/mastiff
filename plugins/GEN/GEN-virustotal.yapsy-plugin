@@ -1,0 +1,10 @@
+[Core]
+Name = VirusTotal
+Module = GEN-virustotal
+
+[Documentation]
+Description = VirusTotal.com Submission Plug-in
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

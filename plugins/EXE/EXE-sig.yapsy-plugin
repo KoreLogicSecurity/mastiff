@@ -1,0 +1,10 @@
+[Core]
+Name = Digital Signatures
+Module = EXE-sig
+
+[Documentation]
+Description = Extract PE digital signatures.
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

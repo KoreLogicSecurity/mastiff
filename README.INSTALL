@@ -1,0 +1,219 @@
+
+REVISION
+
+  $Id: README.INSTALL,v 1.13 2013/04/16 21:16:37 thudak Exp $
+
+OVERVIEW
+
+  MASTIFF is a static analysis framework that automates the process of
+  extracting key characteristics from a number of different file
+  formats.  To ensure the framework remains flexible and extensible, a
+  community-driven set of plug-ins is used to perform file analysis
+  and data extraction.  While originally designed to support malware,
+  intrusion, and forensic analysis, the framework is well-suited to
+  support a broader range of analytic needs.  In a nutshell, MASTIFF
+  allows analysts to focus on analysis rather than figuring out how to
+  parse files.
+
+  The MASTIFF Project is hosted at SourceForge:
+
+    http://sourceforge.net/projects/mastiff/
+
+TECHNICAL REQUIREMENTS
+
+  The following software must be installed for MASTIFF to work
+  properly.
+
+    - Python 2.6.6 or greater
+    - Yapsy 1.10 or greater (http://yapsy.sourceforge.net/)
+    - Python sqlite3 (http://docs.python.org/library/sqlite3)
+    - Python setuptools (http://pypi.python.org/pypi/setuptools/)
+
+  A Python libmagic library is also required. MASTIFF supports two different
+  libmagic libraries:
+
+    - libmagic Python extensions (ftp://ftp.astron.com/pub/file/)
+        This may be installed through the source code above or is the library
+        installed as python-magic in most Linux code repositories.
+
+     - Python-magic (https://github.com/ahupp/python-magic/)
+           This may be installed through the source code above or via Python
+           pip.
+
+  The following are optional but highly recommended:
+
+    - TrID executable and database (http://mark0.net/soft-trid-e.html)
+
+  NOTE: TrID has no source distribution, published hashes, or digital
+  signatures. The MD5/SHA256 hashes for the version utilized by the
+  project owners (v2.11) are:
+
+  MD5: 72b15ddf4aabff36529eb6c8d0dc927e
+  SHA256: b7f10d610ed321733fee6bc86bc6248bc4342dffab6dd350a251e7581c51f168
+
+  Analysis plug-ins may require additional libraries or programs
+  installed in order to function properly.  Please refer to plug-in
+  documentation for details.
+
+PREREQUISITES INSTALLATION
+
+  The Python setuptools and magic libraries will need to be installed
+  on your own.  For Debian/Ubuntu-based distributions, this can be
+  accomplished with:
+
+    $ sudo aptitude install python-setuptools
+    $ sudo aptitude install python-magic
+
+  On Gentoo-based distributions, there is no Python magic package.
+  However, adding the python USE flag to the sys-apps/file package
+  will create the correct Python libraries.
+
+  Setuptools can be installed as follows:
+
+    $ sudo emerge -av setuptools
+
+  Yapsy will automatically download and install when the make program
+  is run, or you can download and install it on your own.  Yapsy is
+  also located in the Gentoo Portage repository.
+
+    $ sudo emerge -av yapsy
+
+  TrID can be installed by downloading the program and its database
+  from the link provided above.  Be sure to point the mastiff.conf
+  trid and trid_db options to the correct location of the files.
+
+  Note that the plug-ins utilized by MASTIFF may have their own
+  prerequisites.
+
+TESTING
+
+  MASTIFF comes with a test set suite that can be used to determine if all
+  prerequisites have been properly installed and MASTIFF is able to analyze
+  files correctly. To run these tests, run:
+
+	$ make test
+
+  Two sets of tests will run.
+
+  - Python imports for all MASTIFF core files and plug-ins will be checked to
+    ensure they can be imported. Any that cannot will be displayed.
+
+  - MASTIFF will examine 4 different files to ensure there are no issues.
+
+  All output will go into the tests/ directory.
+
+INSTALLATION
+
+  If you wish to only test out MASTIFF, skip to the Development
+  Testing section.
+
+  MASTIFF utilizes the Python setuptools code for installation of the
+  package.  The easiest way to install the package is:
+
+    $ sudo make install
+
+  This will install the package into the appropriate Python
+  site-packages directory for your system.  It will also install
+  mas.py, the main MASTIFF wrapper script into /usr/local/bin.
+
+  If you do not have Yapsy installed, it will attempt to download and
+  install it for you.
+
+  If you install using this method, the only way to uninstall is to
+  manually delete files.
+
+  After installing MASTIFF, modify the mastiff.conf configuration file
+  to point to the correct directories for logging and plug-ins.
+
+DEVELOPMENT TESTING
+
+  If instead you wish to only test it for development purposes, run
+  the following command:
+
+    $ sudo make dev
+
+  This will install placeholders into the Python dist-packages that
+  point to this directory.  Any modifications made to the code will
+  automatically be reflected when running the software.  Additionally,
+  mas.py will be placed in /usr/local/bin.
+
+  To uninstall the dev environment, run:
+
+    $ sudo make dev-clean
+
+  This will remove all placeholders as well as /usr/local/bin/mas.py.
+
+PLUG-IN REQUIREMENTS
+
+  At the current release, the plug-ins utilized by MASTIFF require a
+  number of additional libraries or programs to be installed.
+
+    - ssdeep (http://ssdeep.sourceforge.net/)
+    - pydeep (https://github.com/kbandla/pydeep)
+    - Yara, libyara and yara-python must be installed,
+      (http://code.google.com/p/yara-project)
+    - simplejson (https://github.com/simplejson/simplejson)
+    - Didier Stevens pdf-parser.py
+      (http://blog.didierstevens.com/programs/pdf-tools/)
+    - Didier Stevens' pdfid.py (http://blog.didierstevens.com/programs/pdf-tools/)
+    - exiftool (http://www.sno.phy.queensu.ca/~phil/exiftool/)
+    - pefile library (http://code.google.com/p/pefile/)
+      NOTE: Do NOT install pefile from the Debian/Ubuntu repository! Install
+      from source!
+    - disitool.py (http://blog.didierstevens.com/programs/disitool/)
+    - openssl binary (http://www.openssl.org/)
+    - Giuseppe 'Evilcry' Bonfa's pyOLEScanner.py
+      (https://github.com/Evilcry/PythonScripts/raw/master/pyOLEScanner.zip)
+    - distorm (http://code.google.com/p/distorm/)
+
+  Some of these programs may be able to be installed from your
+  distribution's software repository, and some may need to be
+  installed from source.  After these programs have been installed,
+  be sure to check the MASTIFF configuration file and update all
+  configuration options to point to the correct locations.
+
+RUNNING MASTIFF
+
+  The best way to run MASTIFF is to use the mas.py program.  This
+  script has been written to provide you with the maximum number of
+  options for using MASTIFF.  This script will be installed to
+  /usr/local/bin when you install the package.
+
+  mas.py can be run by only giving it a file or directory to analyze as an
+  argument.
+
+    $ mas.py /path/to/file2analyze
+
+  If MASTIFF is given a directory, it will enumerate all files within that
+  directory, and every subdirectory, and analyze them.
+
+  Although the only required argument is the filename or directory to be
+  analyzed, the following table lists available options.
+
+    --clear-queue         Clear the MASTIFF job queue and exit.
+    -c CONFIG_FILE, --conf=CONFIG_FILE
+                          Use an alternate config file. The default is
+                          './mastiff.conf'.
+    -h, --help            Show the help message and exit.
+    --ignore-queue        Ignore the MASTIFF job queue and only process the
+                          given file or directory.
+    -l PLUGIN_TYPE, --list=PLUGIN_TYPE
+                          List all available plug-ins of the specified type and
+                          exit. Type must be one of 'analysis' or 'cat'.
+    -o OVERRIDE, --option=OVERRIDE
+                          Override a config file option. Configuration options
+                          should be specified as 'Section.Key=Value' and should
+                          be quoted if any whitespace is present. Multiple
+                          overrides can be specified by using multiple '-o'
+                          options.
+    -p PLUGIN_NAME, --plugin=PLUGIN_NAME
+                          Only run the specified analysis plug-in. Name must be
+                          quoted if it contains whitespace.
+    -q, --quiet           Only log errors.
+    -t FTYPE, --type=FTYPE
+                          Force file to be analyzed with plug-ins from the
+                          specified category (e.g., EXE, PDF, etc.). Run with
+                          '-l cat' to list all available category plug-ins.
+    -V, --verbose         Print verbose logs.
+    -v, --version         Show program's version number and exit.
+

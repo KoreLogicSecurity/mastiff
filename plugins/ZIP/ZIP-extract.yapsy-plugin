@@ -1,0 +1,10 @@
+[Core]
+Name = ZipExtract
+Module = ZIP-extract
+
+[Documentation]
+Description = Extract zip archive contents.
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

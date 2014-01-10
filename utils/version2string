@@ -1,0 +1,235 @@
+#!/usr/bin/perl -w
+######################################################################
+#
+# $Id: version2string,v 1.7 2013/02/14 01:34:38 mavrik Exp $
+#
+######################################################################
+#
+# Copyright 2008-2013 The WebJob Project, All Rights Reserved.
+#
+######################################################################
+#
+# Purpose: Convert version numbers to a string representation.
+#
+######################################################################
+
+use strict;
+use File::Basename;
+use File::Path;
+use Getopt::Std;
+
+######################################################################
+#
+# Main Routine
+#
+######################################################################
+
+  ####################################################################
+  #
+  # Punch in and go to work.
+  #
+  ####################################################################
+
+  my ($sProgram);
+
+  $sProgram = basename(__FILE__);
+
+  ####################################################################
+  #
+  # Validation expressions.
+  #
+  ####################################################################
+
+  my $sVersionRegex  = qq(0x[0-9A-Fa-f]{8});
+  my $sTypeRegex     = qq((?:cvs|program|tar));
+
+  ####################################################################
+  #
+  # Get Options.
+  #
+  ####################################################################
+
+  my (%hOptions);
+
+  if (!getopts('t:v:', \%hOptions))
+  {
+    Usage($sProgram);
+  }
+
+  ####################################################################
+  #
+  # A type, '-t', is optional.
+  #
+  ####################################################################
+
+  my $sType;
+
+  $sType = (exists($hOptions{'t'})) ? $hOptions{'t'} : "program";
+
+  if (defined($sType) && $sType !~ /^$sTypeRegex$/)
+  {
+    print STDERR "$sProgram: Type='$sType' Error='Invalid version type.'\n";
+    exit(2);
+  }
+
+  ####################################################################
+  #
+  # A version, '-v', is required.
+  #
+  ####################################################################
+
+  my $sVersion = (exists($hOptions{'v'})) ? $hOptions{'v'} : undef;
+
+  if (!defined($sVersion))
+  {
+    Usage($sProgram);
+  }
+
+  if ($sVersion !~ /^$sVersionRegex$/)
+  {
+    print STDERR "$sProgram: Version='$sVersion' Error='Invalid version.'\n";
+    exit(2);
+  }
+
+  ####################################################################
+  #
+  # If any arguments remain, it's an error.
+  #
+  ####################################################################
+
+  if (scalar(@ARGV) > 0)
+  {
+    Usage($sProgram);
+  }
+
+  ####################################################################
+  #
+  # Do some work.
+  #
+  ####################################################################
+
+  print VersionToString(hex($sVersion), $sType), "\n";
+
+  1;
+
+######################################################################
+#
+# VersionToString
+#
+######################################################################
+
+sub VersionToString
+{
+  my ($sVersion, $sType) = @_;
+
+  my $sState = ($sVersion >> 10) & 0x03;
+  my $sStateString = "xx";
+  if ($sState == 0)
+  {
+    $sStateString = "ds";
+  }
+  elsif ($sState == 1)
+  {
+    $sStateString = "rc";
+  }
+  elsif ($sState == 2)
+  {
+    $sStateString = "sr";
+  }
+  elsif ($sState == 3)
+  {
+    $sStateString = "xs";
+  }
+
+  my $sString = "";
+  if (($sVersion & 0xfff) == 0x800)
+  {
+    if ($sType =~ /^cvs$/)
+    {
+      $sString = sprintf
+      (
+        "V%d_%d_%d",
+        ($sVersion >> 28) & 0x0f,
+        ($sVersion >> 20) & 0xff,
+        ($sVersion >> 12) & 0xff
+      );
+    }
+    elsif ($sType =~ /^tar$/)
+    {
+      $sString = sprintf
+      (
+        "%d.%d.%d",
+        ($sVersion >> 28) & 0x0f,
+        ($sVersion >> 20) & 0xff,
+        ($sVersion >> 12) & 0xff
+      );
+    }
+    elsif ($sType =~ /^program$/)
+    {
+      $sString = sprintf
+      (
+        "%d.%d.%d",
+        ($sVersion >> 28) & 0x0f,
+        ($sVersion >> 20) & 0xff,
+        ($sVersion >> 12) & 0xff
+      );
+    }
+  }
+  else
+  {
+    if ($sType =~ /^cvs$/)
+    {
+      $sString = sprintf
+      (
+        "V%d_%d_%d_%s%d",
+        ($sVersion >> 28) & 0x0f,
+        ($sVersion >> 20) & 0xff,
+        ($sVersion >> 12) & 0xff,
+        uc($sStateString),
+        $sVersion & 0x3ff
+      );
+    }
+    elsif ($sType =~ /^tar$/)
+    {
+      $sString = sprintf
+      (
+        "%d.%d.%d.%s%d",
+        ($sVersion >> 28) & 0x0f,
+        ($sVersion >> 20) & 0xff,
+        ($sVersion >> 12) & 0xff,
+        $sStateString,
+        $sVersion & 0x3ff
+      );
+    }
+    elsif ($sType =~ /^program$/)
+    {
+      $sString = sprintf
+      (
+        "%d.%d.%d (%s%d)",
+        ($sVersion >> 28) & 0x0f,
+        ($sVersion >> 20) & 0xff,
+        ($sVersion >> 12) & 0xff,
+        $sStateString,
+        $sVersion & 0x3ff
+      );
+    }
+  }
+
+  return $sString;
+}
+
+
+######################################################################
+#
+# Usage
+#
+######################################################################
+
+sub Usage
+{
+  my ($sProgram) = @_;
+  print STDERR "\n";
+  print STDERR "Usage: $sProgram [-t {cvs|program|tar}] -v version\n";
+  print STDERR "\n";
+  exit(1);
+}

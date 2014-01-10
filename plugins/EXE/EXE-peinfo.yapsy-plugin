@@ -1,0 +1,10 @@
+[Core]
+Name = PE Info
+Module = EXE-peinfo
+
+[Documentation]
+Description = Dump information on the PE header and structure of an executable.
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

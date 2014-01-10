@@ -1,0 +1,17 @@
+Metadata-Version: 1.0
+Name: mastiff
+Version: 0.6.0
+Summary: MASTIFF is a static analysis automation framework.
+Home-page: http://www.korelogic.com
+Author: Tyler Hudak
+Author-email: mastiff-project@korelogic.com
+License: Apache License V2.0
+Description: MASTIFF is a static analysis framework that automates the
+        process of extracting key characteristics from a number of different file
+        formats. To ensure the framework remains flexible and extensible, a
+        community-driven set of plug-ins is used to perform file analysis and data
+        extraction. While originally designed to support malware, intrusion, and
+        forensic analysis, the framework is well-suited to support a broader range of
+        analytic needs. In a nutshell, MASTIFF allows analysts to focus on analysis
+        rather than figuring out how to parse files.
+Platform: Linux

@@ -1,0 +1,10 @@
+[Core]
+Name = Office Metadata
+Module = Office-metadata
+
+[Documentation]
+Description = Extract Office metadata from document.
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

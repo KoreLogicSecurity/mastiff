@@ -1,0 +1,9 @@
+[Core]
+Name = GenSkel Ext Prog
+Module = analysis-ext-skel
+
+[Documentation]
+Description = Your Description Here
+Author = Your Name Here
+Version = 0.1
+Website = Your Website Here

@@ -1,0 +1,10 @@
+[Core]
+Name = Embedded Strings Plugin
+Module = GEN-strings
+
+[Documentation]
+Description = Embedded Strings Plugin
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

@@ -1,0 +1,10 @@
+[Core]
+Name = Resources
+Module = EXE-resources
+
+[Documentation]
+Description = Obtain information on and extract PE resources.
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

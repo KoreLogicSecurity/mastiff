@@ -1,0 +1,10 @@
+[Core]
+Name = Adobe PDF Category
+Module = pdf
+
+[Documentation]
+Description = Adobe PDF Category Plugin
+Author = Tyler Hudak
+Website = www.korelogic.com
+Version = 1.0
+License = Apache License, Version 2.0

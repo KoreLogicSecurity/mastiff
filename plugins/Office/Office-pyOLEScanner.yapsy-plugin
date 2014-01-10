@@ -1,0 +1,10 @@
+[Core]
+Name = Office pyOLEScanner
+Module = Office-pyOLEScanner
+
+[Documentation]
+Description = pyOLEScanner plug-in based on Giuseppe 'Evilcry' Bonfa's code.
+Author = Tyler Hudak/Giuseppe 'Evilcry' Bonfa
+Version = 1.0
+Website = www.korelogic.com / https://github.com/Evilcry/PythonScripts/raw/master/pyOLEScanner.zip
+License = Apache License, Version 2.0

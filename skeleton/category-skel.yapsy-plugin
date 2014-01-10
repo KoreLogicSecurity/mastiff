@@ -1,0 +1,9 @@
+[Core]
+Name = Category Skeleton Plug-in
+Module = category-skeleton
+
+[Documentation]
+Description = Your Description Here
+Author = Your Name Here
+Website = Your Website Here
+Version = 0.1

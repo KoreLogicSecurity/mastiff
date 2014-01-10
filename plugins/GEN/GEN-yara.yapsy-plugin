@@ -1,0 +1,10 @@
+[Core]
+Name = yara
+Module = GEN-yara
+
+[Documentation]
+Description = Yara Signature Plug-in
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0
