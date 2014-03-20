@@ -33,7 +33,7 @@ NOTE:
 
 """
 
-__version__ = "$Id: Office-pyOLEScanner.py,v 1.14 2013/02/12 18:25:02 thudak Exp $"
+__version__ = "$Id$"
 
 import subprocess
 import logging

@@ -54,7 +54,7 @@ TODO:
 
 """
 
-__version__ = "$Id: EXE-sig.py,v 1.11 2013/04/16 21:16:38 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 import os

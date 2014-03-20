@@ -25,7 +25,7 @@ output_file(outdir, data): MANDATORY: Function that puts the data received into
                            a given directory.
 """
 
-__version__ = "$Id: analysis-skel.py,v 1.9 2013/02/11 19:55:23 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 

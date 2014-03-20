@@ -29,7 +29,7 @@ This module now supports the use of two different type of libmagic Python librar
 
 """
 
-__version__ = "$Id: filetype.py,v 1.16 2013/04/10 14:15:49 thudak Exp $"
+__version__ = "$Id$"
 
 import magic
 import logging

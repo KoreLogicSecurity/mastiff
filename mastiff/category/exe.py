@@ -36,7 +36,7 @@ is_my_filetype(id_dict, file_name): MANDATORY: This function will return
             returned if it does not analyze this type.
 """
 
-__version__ = "$Id: exe.py,v 1.3 2012/06/29 16:41:56 thudak Exp $"
+__version__ = "$Id$"
 
 import struct
 import mastiff.category.categories as categories

@@ -67,7 +67,7 @@ NOTE:
 
 """
 
-__version__ = "$Id: GEN-yara.py,v 1.15 2013/02/21 22:06:15 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 import os

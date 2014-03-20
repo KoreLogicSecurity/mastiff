@@ -35,7 +35,7 @@ Configuration Options:
 exiftool = Path to exiftool program
 """
 
-__version__ = "$Id: Office-metadata.py,v 1.8 2013/02/11 19:55:22 thudak Exp $"
+__version__ = "$Id$"
 
 import subprocess
 import logging

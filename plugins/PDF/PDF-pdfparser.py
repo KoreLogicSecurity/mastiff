@@ -40,7 +40,7 @@ pdf_cmd = Path to pdf-parser.py
 
 """
 
-__version__ = "$Id: PDF-pdfparser.py,v 1.14 2013/03/22 15:04:18 thudak Exp $"
+__version__ = "$Id$"
 
 import os
 import subprocess

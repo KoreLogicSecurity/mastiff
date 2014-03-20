@@ -18,7 +18,7 @@ would be:
 plugcmd = /path/to/my_prog
 """
 
-__version__ = "$Id: analysis-ext-skel.py,v 1.11 2013/02/11 19:55:23 thudak Exp $"
+__version__ = "$Id$"
 
 import subprocess
 import logging

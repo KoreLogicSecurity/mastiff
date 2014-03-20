@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: import-test.sh,v 1.2 2013/04/12 18:28:23 thudak Exp $
+# $Id$
 #
 # Find all imports from the MASTIFF python files and ensure they can be
 # imported.

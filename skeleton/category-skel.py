@@ -14,7 +14,7 @@ __init__(): MANDATORY: Any initialization code the category requires. It must
             also call the __init__ for its superclass - in this case OfficeCat.
 """
 
-__version__ = "$Id: category-skel.py,v 1.8 2013/02/11 19:55:23 thudak Exp $"
+__version__ = "$Id$"
 
 import mastiff.category.categories as categories
 

@@ -41,7 +41,7 @@ Output:
    dictionary.
 """
 
-__version__ = "$Id: GEN-strings.py,v 1.16 2013/02/21 22:06:15 thudak Exp $"
+__version__ = "$Id$"
 
 import subprocess
 import re

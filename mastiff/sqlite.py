@@ -23,7 +23,7 @@ data into a sqlite database.
 
 """
 
-__version__ = "$Id: sqlite.py,v 1.17 2013/02/11 20:46:10 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 import os

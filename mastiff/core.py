@@ -83,7 +83,7 @@ name, path and description. The function can print out analysis or category
 plug-in information.
 """
 
-__version__ = "$Id: core.py,v 1.40 2013/04/17 15:44:23 thudak Exp $"
+__version__ = "$Id$"
 
 import sys
 import os

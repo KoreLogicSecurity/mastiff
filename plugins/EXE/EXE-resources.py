@@ -40,7 +40,7 @@ Pre-requisites:
 
 """
 
-__version__ = "$Id: EXE-resources.py,v 1.10 2013/02/11 19:55:22 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 import os

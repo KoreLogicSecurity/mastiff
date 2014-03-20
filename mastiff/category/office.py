@@ -30,7 +30,7 @@ __init__(): MANDATORY: Any initialization code the category requires. It must
             also call the __init__ for the MastiffPlugin class.
 """
 
-__version__ = "$Id: office.py,v 1.3 2012/06/29 16:41:56 thudak Exp $"
+__version__ = "$Id$"
 
 import mastiff.category.categories as categories
 

@@ -37,7 +37,7 @@ Requirements:
 
 """
 
-__version__ = "$Id: EXE-peinfo.py,v 1.12 2013/02/11 19:55:22 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 import os

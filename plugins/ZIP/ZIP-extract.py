@@ -34,7 +34,7 @@ Output:
 
 """
 
-__version__ = "$Id: ZIP-extract.py,v 1.14 2013/03/22 15:04:18 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 import os

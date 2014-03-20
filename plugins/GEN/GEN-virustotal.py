@@ -49,7 +49,7 @@ Note:
 
 """
 
-__version__ = "$Id: GEN-virustotal.py,v 1.16 2013/02/11 19:55:22 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 import simplejson

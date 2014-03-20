@@ -37,7 +37,7 @@ Configuration Options:
 
 """
 
-__version__ = "$Id: PDF-pdfid.py,v 1.10 2013/02/11 19:55:23 thudak Exp $"
+__version__ = "$Id$"
 
 import subprocess
 import logging

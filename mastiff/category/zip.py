@@ -26,7 +26,7 @@ Output:
 
 """
 
-__version__ = "$Id: zip.py,v 1.7 2013/02/11 19:55:22 thudak Exp $"
+__version__ = "$Id$"
 
 import zipfile
 import mastiff.category.categories as categories

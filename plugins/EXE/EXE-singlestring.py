@@ -43,7 +43,7 @@ Output:
 
 """
 
-__version__ = "$Id: EXE-singlestring.py,v 1.10 2013/03/29 14:49:16 thudak Exp $"
+__version__ = "$Id$"
 
 import logging
 import re

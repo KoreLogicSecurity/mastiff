@@ -40,7 +40,7 @@ Output:
 
 """
 
-__version__ = "$Id: GEN-fileinfo.py,v 1.12 2013/02/11 19:55:22 thudak Exp $"
+__version__ = "$Id$"
 
 import os
 import time

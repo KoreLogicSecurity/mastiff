@@ -23,7 +23,7 @@ a plugin-based framework.
 
 """
 
-__version__ = "$Id: mas.py,v 1.29 2013/03/26 14:04:22 thudak Exp $"
+__version__ = "$Id$"
 
 import sys
 import logging

@@ -20,7 +20,7 @@
    the plug-ins may want to use.
 """
 
-__version__ = "$Id: plugins.py,v 1.11 2013/02/11 19:55:22 thudak Exp $"
+__version__ = "$Id$"
 
 import httplib, mimetypes
 import binascii

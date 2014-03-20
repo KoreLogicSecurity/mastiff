@@ -20,7 +20,7 @@ The base category classes for each of the file types analyzed by
 mastiff.
 """
 
-__version__ = "$Id: categories.py,v 1.3 2012/06/28 21:26:05 thudak Exp $"
+__version__ = "$Id$"
 
 from yapsy.IPlugin import IPlugin
 

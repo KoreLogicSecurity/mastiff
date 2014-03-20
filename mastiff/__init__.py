@@ -19,7 +19,7 @@
   This file contains package-level variables and functions.
 """
 
-__version__ = "$Id: __init__.py,v 1.20 2013/04/18 20:11:24 klm Exp $"
+__version__ = "$Id$"
 
 version = 0x00600800
 

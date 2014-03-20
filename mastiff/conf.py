@@ -40,7 +40,7 @@ override_option(): Override an option from the config file.
 
 """
 
-__version__ = "$Id: conf.py,v 1.16 2013/03/04 15:38:52 thudak Exp $"
+__version__ = "$Id$"
 
 import os
 import sys

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.15 2013/04/12 18:28:23 thudak Exp $
+# $Id$
 #
 # Makefile for installation of mastiff.
 #
