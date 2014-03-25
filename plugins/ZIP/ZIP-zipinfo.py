@@ -2,20 +2,14 @@
 """
   Copyright 2012-2013 The MASTIFF Project, All Rights Reserved.
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+  This software, having been partly or wholly developed and/or
+  sponsored by KoreLogic, Inc., is hereby released under the terms
+  and conditions set forth in the project's "README.LICENSE" file.
+  For a list of all contributors and sponsors, please refer to the
+  project's "README.CREDITS" file.
 """
 
-"""
+__doc__ = """
 Zipinfo Analysis Plug-in
 
 Plugin Type: ZIP
@@ -72,17 +66,19 @@ class ZipInfo_u(zip.ZipCat):
         try:
             my_zip = zipfile.ZipFile(filename, 'r')
             info_list = my_zip.infolist()
-        except zipfile.BadZipfile, err:
+        except (zipfile.BadZipfile, IOError), err:
             log.error('Unable to open or process zip file: %s' \
                       % err)
             return False
 
-        out_str = "File Name: %s\n" % (os.path.basename(filename))
+
+        out_str = u"File Name: %s\n" % (os.path.basename(filename))
         if my_zip.comment is None or len(my_zip.comment) == 0:
             out_str += "This file has no comment.\n\n"
         else:
-            out_str += u"Comment: %s\n\n" % (my_zip.comment)
-
+            # ignore any unprintable unicode characters
+            out_str += unicode("Comment: %s\n\n" % (my_zip.comment),  errors='ignore')            
+        
         my_zip.close()
 
         out_str += self.quick_info(info_list) + '\n'

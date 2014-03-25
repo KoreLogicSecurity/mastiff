@@ -2,21 +2,15 @@
 """
   Copyright 2012-2013 The MASTIFF Project, All Rights Reserved.
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+  This software, having been partly or wholly developed and/or
+  sponsored by KoreLogic, Inc., is hereby released under the terms
+  and conditions set forth in the project's "README.LICENSE" file.
+  For a list of all contributors and sponsors, please refer to the
+  project's "README.CREDITS" file.
 """
 
-"""
-Mastiff - MAlicious file Static Inspection Framework
+__doc__ = """
+MASTIFF - MAlicious Static Inspection File Framework
 
 This module implements the primary class for static analysis inspection.
 

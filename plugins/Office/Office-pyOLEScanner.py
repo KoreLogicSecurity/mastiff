@@ -1,5 +1,15 @@
 #!/usr/bin/env python
 """
+  Copyright 2012-2013 The MASTIFF Project, All Rights Reserved.
+
+  This software, having been partly or wholly developed and/or
+  sponsored by KoreLogic, Inc., is hereby released under the terms
+  and conditions set forth in the project's "README.LICENSE" file.
+  For a list of all contributors and sponsors, please refer to the
+  project's "README.CREDITS" file.
+"""
+
+__doc__ = """
 pyOLEScanner.py Plug-in
 
 Plugin Type: Office

@@ -2,20 +2,14 @@
 """
   Copyright 2012-2013 The MASTIFF Project, All Rights Reserved.
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+  This software, having been partly or wholly developed and/or
+  sponsored by KoreLogic, Inc., is hereby released under the terms
+  and conditions set forth in the project's "README.LICENSE" file.
+  For a list of all contributors and sponsors, please refer to the
+  project's "README.CREDITS" file.
 """
 
-"""
+__doc__ = """
 Embedded Strings Extraction Plugin
 
 Plugin Type: Generic
@@ -110,8 +104,13 @@ class GenStrings(gen.GenericCat):
                                str_opts['str_opts'].split() + str_opts['str_uni_opts'].split() + [ filename ],
                                stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, 
                                close_fds=True)
         (output, error) = run.communicate()
+        if error is not None and len(error) > 0:
+            log.error('Error running program: %s' % error)
+            return False
+        
         self._insert_strings(output,'U')
 
         self.output_file(config.get_var('Dir','log_dir'))

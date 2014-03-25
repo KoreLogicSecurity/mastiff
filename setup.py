@@ -1,6 +1,17 @@
 #!/usr/bin/env python
+"""
+  Copyright 2012-2013 The MASTIFF Project, All Rights Reserved.
 
-""" Setup/install script for MASTIFF. """
+  This software, having been partly or wholly developed and/or
+  sponsored by KoreLogic, Inc., is hereby released under the terms
+  and conditions set forth in the project's "README.LICENSE" file.
+  For a list of all contributors and sponsors, please refer to the
+  project's "README.CREDITS" file.
+"""
+
+__doc__ = """
+This file is the setup/install script for MASTIFF.
+"""
 
 import sys
 from setuptools import setup
