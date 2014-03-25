@@ -1,0 +1,9 @@
+[Core]
+Name = Hex Dump
+Module = GEN-hex
+
+[Documentation]
+Description = Creates a hex dump of the file.
+Author = Tyler Hudak
+Version = 0.1
+Website = www.korelogic.com
