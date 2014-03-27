@@ -71,12 +71,36 @@ class PEInfo(exe.EXECat):
             return False
 
         return True
+        
+    @staticmethod
+    def _dump_section_headers(pe):
+        """
+              Small internal function to dump the section headers in a table. 
+              Returns a string to do so.
+        """
+        section_string = ''
+        section_flags = pefile.retrieve_flags(pefile.SECTION_CHARACTERISTICS, 'IMAGE_SCN_')
+        section_string += '\nNumber of Sections: %d\n' % pe.FILE_HEADER.NumberOfSections
+        section_string += '{0:15} {1:8} {2:40}\n'.format('Section Name', 'Entropy', 'Flags')
+        section_string += '-'*65 + '\n'
+        for section in pe.sections:
+            # thanks to the pefile example code for this
+            flags = []
+            for flag in section_flags:
+                if getattr(section, flag[0]):
+                    flags.append(flag[0])
+
+            # the following line was taken from Didier Steven's pecheck.py code
+            section_string += '{0:15} {1:<8.5} {2:40}\n'.format(''.join(filter(lambda c:c != '\0', str(section.Name))), \
+                                                                                                        section.get_entropy(),
+                                                                                                        ', '.join(flags))
+        section_string += '\n'
+        return section_string        
 
     def output_file_quick(self, outdir, pe):
         """Output short, useful information on file."""
 
-        log = logging.getLogger('Mastiff.Plugins.' + self.name + '.quick')
-        section_flags = pefile.retrieve_flags(pefile.SECTION_CHARACTERISTICS, 'IMAGE_SCN_')
+        log = logging.getLogger('Mastiff.Plugins.' + self.name + '.quick')        
 
         try:
             outfile = open(outdir + os.sep + 'peinfo-quick.txt', 'w')
@@ -85,20 +109,7 @@ class PEInfo(exe.EXECat):
             outfile.write('TimeDateStamp: %s\n' % time.asctime(time.gmtime(pe.FILE_HEADER.TimeDateStamp)))
             outfile.write('Subsystem: %s\n' % pefile.SUBSYSTEM_TYPE[pe.OPTIONAL_HEADER.Subsystem])
 
-            outfile.write('\nNumber of Sections: %d\n' % pe.FILE_HEADER.NumberOfSections)
-            outfile.write('{0:15} {1:8} {2:40}\n'.format('Section Name', 'Entropy', 'Flags'))
-            outfile.write('-'*65 + '\n')
-            for section in pe.sections:
-                # thanks to the pefile example code for this
-                flags = []
-                for flag in section_flags:
-                    if getattr(section, flag[0]):
-                        flags.append(flag[0])
-
-                # the following line was taken from Didier Steven's pecheck.py code
-                outfile.write('{0:15} {1:<8.5} {2:40}\n'.format(''.join(filter(lambda c:c != '\0', str(section.Name))), \
-                                                        section.get_entropy(),
-                                                        ', '.join(flags)))
+            outfile.write(self._dump_section_headers(pe))
 
             # any parsing warnings (often related to packers
             outfile.write('\nParser Warnings:\n')
@@ -111,8 +122,8 @@ class PEInfo(exe.EXECat):
             if hasattr(pe, "FileInfo"):
                 for fileinfo in pe.FileInfo:
                     if fileinfo.Key == 'StringFileInfo':
-                        for st in fileinfo.StringTable:
-                            for entry in st.entries.items():
+                        for string_entry in fileinfo.StringTable:
+                            for entry in string_entry.entries.items():
                                 outfile.write("{0:20}:\t{1:40}\n".format(printable_str(entry[0]), \
                                                             printable_str(entry[1])))
                     if fileinfo.Key == 'VarFileInfo':
@@ -163,8 +174,8 @@ class PEInfo(exe.EXECat):
 
         try:
             outfile = open(outdir + os.sep + 'peinfo-full.txt', 'w')
-            outfile.write('PE Header Information\n\n')
-            outfile.write('Full Information Dump:\n\n')
+            outfile.write('\nFull Information Dump:\n')
+            outfile.write(self._dump_section_headers(pe))                                                                    
             outfile.write(pe.dump_info())
             outfile.close()
         except IOError, err:
