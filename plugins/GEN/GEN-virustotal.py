@@ -209,7 +209,7 @@ class GenVT(gen.GenericCat):
         if response['positives'] > 0:
             vt_file.write('{0:25} {1:15} {2:40}\n'.format('AV', 'Version', 'Results'))
 
-            for av_key in response['scans'].keys():
+            for av_key in sorted(response['scans'].keys(), key=lambda s: s.lower()):
 
                 if response['scans'][av_key]['detected'] == True:
                     out_str = '{0:25} {1:15} {2:40}\n'
