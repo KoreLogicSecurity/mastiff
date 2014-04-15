@@ -106,7 +106,10 @@ class PEInfo(exe.EXECat):
             outfile = open(outdir + os.sep + 'peinfo-quick.txt', 'w')
             outfile.write('PE Header Information\n\n')
             outfile.write('Quick Info:\n\n')
-            outfile.write('TimeDateStamp: %s\n' % time.asctime(time.gmtime(pe.FILE_HEADER.TimeDateStamp)))
+            try:
+                outfile.write('TimeDateStamp: %s\n' % time.asctime(time.gmtime(pe.FILE_HEADER.TimeDateStamp)))
+            except ValueError:
+                outfile.write('TimeDataStamp: Invalid Time %x\n' % (pe.FILE_HEADER.TimeDateStamp))
             outfile.write('Subsystem: %s\n' % pefile.SUBSYSTEM_TYPE[pe.OPTIONAL_HEADER.Subsystem])
 
             outfile.write(self._dump_section_headers(pe))
