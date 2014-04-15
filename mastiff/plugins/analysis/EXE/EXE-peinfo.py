@@ -36,6 +36,7 @@ __version__ = "$Id$"
 import logging
 import os
 import time
+import sys
 
 try:
     import pefile
@@ -63,8 +64,8 @@ class PEInfo(exe.EXECat):
 
         try:
             pe = pefile.PE(filename)
-        except pefile.PEFormatError, err:
-            log.error('Unable to parse PE file: %s' % err)
+        except:
+            log.error('Unable to parse PE file: %s' % sys.exc_info[0])
             return False
 
         if not self.output_file_quick(config.get_var('Dir','log_dir'), pe) or not self.output_file_full(config.get_var('Dir','log_dir'), pe):
