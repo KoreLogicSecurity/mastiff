@@ -15,4 +15,4 @@ include tests/*
 include utils/*
 exclude README.RELENG
 recursive-exclude docs *.odt
-recursive-include plugins *.py *.yapsy-plugin
+recursive-include mastiff *.py *.yapsy-plugin
