@@ -36,7 +36,7 @@ import os
 
 # Change the following line to import the category class you for the files
 # you wish to perform analysis on
-import mastiff.category.generic as gen
+import mastiff.plugins.category.generic as gen
 
 # Change the class name and the base class
 class GenSkelExt(gen.GenericCat):

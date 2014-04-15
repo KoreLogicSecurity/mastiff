@@ -26,7 +26,7 @@ __init__(): MANDATORY: Any initialization code the category requires. It must
 
 __version__ = "$Id$"
 
-import mastiff.category.categories as categories
+import mastiff.plugins.category.categories as categories
 
 # Change the class name to identify the new file type
 class SkelCat(categories.MastiffPlugin):
