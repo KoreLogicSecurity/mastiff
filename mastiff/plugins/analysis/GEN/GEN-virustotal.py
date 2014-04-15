@@ -53,7 +53,7 @@ import os
 import socket
 
 import mastiff.plugins as plugins
-import mastiff.category.generic as gen
+import mastiff.plugins.category.generic as gen
 
 class GenVT(gen.GenericCat):
     """VirusTotal plugin code."""

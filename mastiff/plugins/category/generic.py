@@ -32,7 +32,7 @@ is_my_filetype(id_dict, file_name): MANDATORY: This function will return
 
 __version__ = "$Id$"
 
-import mastiff.category.categories as categories
+import mastiff.plugins.category.categories as categories
 
 class GenericCat(categories.MastiffPlugin):
     """Category class for any file."""

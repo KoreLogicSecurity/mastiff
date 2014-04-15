@@ -43,7 +43,7 @@ except ImportError, err:
     print ("Unable to import pefile: %s" % err)
 
 from mastiff.plugins import printable_str
-import mastiff.category.exe as exe
+import mastiff.plugins.category.exe as exe
 
 class PEInfo(exe.EXECat):
     """Dumps PE information."""

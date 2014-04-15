@@ -36,7 +36,7 @@ import logging
 import zipfile
 import codecs
 
-import mastiff.category.zip as zip
+import mastiff.plugins.category.zip as zip
 
 class ZipInfo_u(zip.ZipCat):
     """Class to extract zip metadata and place it into a file."""

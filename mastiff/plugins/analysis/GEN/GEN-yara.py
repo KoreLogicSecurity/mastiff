@@ -73,7 +73,7 @@ except ImportError, error:
     print "GenYara: Could not import yara: %s" % error
 
 import mastiff.sqlite as DB
-import mastiff.category.generic as gen
+import mastiff.plugins.category.generic as gen
 import mastiff.plugins as plugins
 
 class GenYara(gen.GenericCat):

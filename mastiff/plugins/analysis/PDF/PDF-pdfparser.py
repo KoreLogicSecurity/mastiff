@@ -42,7 +42,7 @@ import logging
 import re
 
 import mastiff.queue as queue
-import mastiff.category.pdf as pdf
+import mastiff.plugins.category.pdf as pdf
 
 class PDFparser(pdf.PDFCat):
     """Plug-in to run Didier Stevens pdf-parser.py script."""

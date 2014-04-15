@@ -42,7 +42,7 @@ import re
 import logging
 import os
 
-import mastiff.category.generic as gen
+import mastiff.plugins.category.generic as gen
 
 class GenStrings(gen.GenericCat):
     """Extract embedded strings."""

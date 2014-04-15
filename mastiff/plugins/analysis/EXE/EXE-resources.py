@@ -45,7 +45,7 @@ try:
 except ImportError, err:
     print ("Unable to import pefile: %s" % err)
 
-import mastiff.category.exe as exe
+import mastiff.plugins.category.exe as exe
 
 class EXE_Resources(exe.EXECat):
     """EXE Resources plugin code."""

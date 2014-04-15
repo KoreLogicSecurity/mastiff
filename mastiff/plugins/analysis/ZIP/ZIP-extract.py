@@ -34,7 +34,7 @@ import logging
 import os
 import zipfile
 
-import mastiff.category.zip as zip
+import mastiff.plugins.category.zip as zip
 import mastiff.queue as queue
 
 class ZipExtract_u(zip.ZipCat):

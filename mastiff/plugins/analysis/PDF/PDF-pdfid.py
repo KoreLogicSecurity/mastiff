@@ -37,7 +37,7 @@ import subprocess
 import logging
 import os
 
-import mastiff.category.pdf as pdf
+import mastiff.plugins.category.pdf as pdf
 
 class PDFid(pdf.PDFCat):
     """Run Didier Stevens pdfid.py"""

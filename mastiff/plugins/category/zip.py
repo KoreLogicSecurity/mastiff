@@ -23,7 +23,7 @@ Output:
 __version__ = "$Id$"
 
 import zipfile
-import mastiff.category.categories as categories
+import mastiff.plugins.category.categories as categories
 
 class ZipCat(categories.MastiffPlugin):
     """ Category class for Zip documents."""

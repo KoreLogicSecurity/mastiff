@@ -48,7 +48,7 @@ try:
 except ImportError, err:
     print "EXE-SingleString: Could not import distorm3: %s" % error
     
-import mastiff.category.exe as exe
+import mastiff.plugins.category.exe as exe
 
 # Change the class name and the base class
 class SingleString(exe.EXECat):

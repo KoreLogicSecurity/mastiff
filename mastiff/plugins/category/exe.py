@@ -33,7 +33,7 @@ is_my_filetype(id_dict, file_name): MANDATORY: This function will return
 __version__ = "$Id$"
 
 import struct
-import mastiff.category.categories as categories
+import mastiff.plugins.category.categories as categories
 
 class EXECat(categories.MastiffPlugin):
     """Category class for Windows executables."""

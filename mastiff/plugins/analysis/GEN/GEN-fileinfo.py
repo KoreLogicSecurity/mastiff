@@ -41,7 +41,7 @@ import time
 import logging
 import sqlite3
 
-import mastiff.category.generic as gen
+import mastiff.plugins.category.generic as gen
 import mastiff.sqlite as DB
 
 class GenFileInfo(gen.GenericCat):

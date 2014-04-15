@@ -82,7 +82,7 @@ class Conf:
         """
         self.config.add_section('Dir')
         self.set_var('Dir', 'log_dir', '/var/log/mastiff')
-        self.set_var('Dir', 'plugin_dir', '/usr/local/mastiff/plugins')
+        #self.set_var('Dir', 'plugin_dir', '/usr/local/mastiff/plugins')
         self.config.add_section('Misc')
         self.set_var('Misc', 'verbose', 'off')
 

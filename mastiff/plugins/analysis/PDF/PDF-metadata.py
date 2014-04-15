@@ -10,22 +10,26 @@
 """
 
 __doc__ = """
-Office MetaData Plug-in
+PDF MetaData Plug-in
 
 Plugin Type: PDF
 Purpose:
-  Extracts any metadata from an Office document using exiftool
-  (http://www.sno.phy.queensu.ca/~phil/exiftool/).
+  Extracts any metadata from a PDF using exiftool (http://www.sno.phy.queensu.ca/~phil/exiftool/)
 
 Output:
-   metadata.txt - Contains selected pieces of metadata.
+   metadata.txt - Contains selected pieces of extracted metadata.
 
 Requirements:
   The exiftool binary is required for this plug-in. The binary can be downloaded
   from http://www.sno.phy.queensu.ca/~phil/exiftool/.
 
+TODO:
+  Exiftool will miss some metadata, especially if the Info object is present but
+  not specified. Future versions of this plug-in will brute force the metadata,
+  but PDF-parsing code needs to be written (or import pdf-parser.py).
+
 Configuration Options:
-[Office Metadata]
+[PDF Metadata]
 exiftool = Path to exiftool program
 """
 
@@ -36,14 +40,14 @@ import logging
 import os
 
 from mastiff.plugins import printable_str
-import mastiff.category.office as office
+import mastiff.plugins.category.pdf as pdf
 
-class OfficeMetadata(office.OfficeCat):
-    """Office Metadata plug-in."""
+class PDFMetadata(pdf.PDFCat):
+    """PDF Metadata plug-in."""
 
     def __init__(self):
         """Initialize the plugin."""
-        office.OfficeCat.__init__(self)
+        pdf.PDFCat.__init__(self)
 
     def analyze(self, config, filename):
         """
@@ -82,16 +86,13 @@ class OfficeMetadata(office.OfficeCat):
             return False
 
         metadata = dict()
-        keywords = [ 'Author', 'Code Page', 'Comments', 'Company',
-                     'Create Date', 'Current User', 'Error',
-                     'File Modification Date/Time', 'File Type',
-                     'Internal Version Number', 'Keywords',
-                     'Last Modified By', 'Last Printed', 'MIME Type',
-                     'Modify Date', 'Security', 'Software', 'Subject',
-                     'Tag PID GUID', 'Template', 'Title', 'Title Of Parts',
-                     'Total Edit Time', 'Warning']
+        keywords = [ 'Creator', 'Create Date', 'Title', 'Author', 'Producer',
+                     'Modify Date', 'Creation Date', 'Mod Date', 'Subject',
+                     'Keywords', 'Author', 'Metadata Date', 'Description',
+                     'Creator Tool', 'Document ID', 'Instance ID', 'Warning']
 
         # grab only data we are interested in
+
         for line in output.split('\n'):
             if line.split(' :')[0].rstrip() in keywords:
                 metadata[line.split(':')[0].rstrip()] = \
@@ -109,7 +110,7 @@ class OfficeMetadata(office.OfficeCat):
 
         try:
             out_file = open(outdir + os.sep + "metadata.txt",'w')
-            out_file.write('Office Document Metadata\n\n')
+            out_file.write('PDF Metadata\n\n')
             for key in data.keys():
                 out_file.write('{0:25}\t{1}\n'.format(key, printable_str(data[key])) )
         except IOError, err:

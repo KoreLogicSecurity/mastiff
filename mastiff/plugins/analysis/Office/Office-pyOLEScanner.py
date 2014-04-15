@@ -50,7 +50,7 @@ import logging
 import os
 import sys
 
-import mastiff.category.office as office
+import mastiff.plugins.category.office as office
 
 class OfficepyOLEScanner(office.OfficeCat):
     """

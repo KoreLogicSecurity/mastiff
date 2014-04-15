@@ -60,7 +60,7 @@ import pefile
 
 # Change the following line to import the category class you for the files
 # you wish to perform analysis on
-import mastiff.category.exe as exe
+import mastiff.plugins.category.exe as exe
 
 class EXESig(exe.EXECat):
     """PE digital signature analysis plugin."""

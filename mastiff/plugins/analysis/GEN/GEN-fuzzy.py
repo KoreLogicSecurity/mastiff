@@ -42,7 +42,7 @@ except ImportError, error:
 
 import mastiff.sqlite as DB
 import sqlite3
-import mastiff.category.generic as gen
+import mastiff.plugins.category.generic as gen
 
 class GenFuzzy(gen.GenericCat):
     """Fuzzy hashing plugin."""

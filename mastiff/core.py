@@ -99,7 +99,8 @@ except ImportError, err:
 import mastiff.conf as Conf
 import mastiff.filetype as FileType
 import mastiff.sqlite as DB
-import mastiff.category.categories as Cats
+import mastiff.plugins.category.categories as Cats
+import mastiff.plugins.analysis as analysis
 
 
 class Mastiff:
@@ -146,10 +147,11 @@ class Mastiff:
         self.cat_paths = [ os.path.dirname(Cats.__file__) ]
 
         # convert plugin paths to list
-        self.plugin_paths = list()
+        self.plugin_paths = [ os.path.dirname(analysis.__file__)]
         # strip whitespace from dirs
         for tmp in str(self.config.get_var('Dir','plugin_dir')).split(','):
-            self.plugin_paths.append(os.path.expanduser(tmp.lstrip().rstrip()))
+            if tmp:
+                self.plugin_paths.append(os.path.expanduser(tmp.lstrip().rstrip()))
 
         self.filetype = dict()
         self.file_name = None
@@ -172,10 +174,10 @@ class Mastiff:
 
             log.debug('Found category: %s', pluginInfo.name)
             try:
-                mod_name = "mastiff.category.%s" % \
+                mod_name = "mastiff.plugins.category.%s" % \
                            os.path.basename(pluginInfo.path)
                 cat_mod = __import__(mod_name,
-                                   fromlist=["mastiff.category"])
+                                   fromlist=["mastiff.plugins.category"])
             except ImportError, err:
                 log.error("Unable to import category %s: %s",
                           pluginInfo.name,
