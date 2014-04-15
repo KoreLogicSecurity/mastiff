@@ -123,7 +123,8 @@ INSTALLATION
   manually delete files.
 
   After installing MASTIFF, modify the mastiff.conf configuration file
-  to point to the correct directories for logging and plug-ins.
+  to ensure the options for plug-ins are correctly set for your analysis
+  system.
 
 DEVELOPMENT TESTING
 
