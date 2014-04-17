@@ -191,30 +191,33 @@ RUNNING MASTIFF
   Although the only required argument is the filename or directory to be
   analyzed, the following table lists available options.
 
-    --clear-queue         Clear the MASTIFF job queue and exit.
-    -c CONFIG_FILE, --conf=CONFIG_FILE
-                          Use an alternate config file. The default is
-                          './mastiff.conf'.
-    -h, --help            Show the help message and exit.
-    --ignore-queue        Ignore the MASTIFF job queue and only process the
-                          given file or directory.
-    -l PLUGIN_TYPE, --list=PLUGIN_TYPE
-                          List all available plug-ins of the specified type and
-                          exit. Type must be one of 'analysis' or 'cat'.
-    -o OVERRIDE, --option=OVERRIDE
-                          Override a config file option. Configuration options
-                          should be specified as 'Section.Key=Value' and should
-                          be quoted if any whitespace is present. Multiple
-                          overrides can be specified by using multiple '-o'
-                          options.
-    -p PLUGIN_NAME, --plugin=PLUGIN_NAME
-                          Only run the specified analysis plug-in. Name must be
-                          quoted if it contains whitespace.
-    -q, --quiet           Only log errors.
-    -t FTYPE, --type=FTYPE
-                          Force file to be analyzed with plug-ins from the
-                          specified category (e.g., EXE, PDF, etc.). Run with
-                          '-l cat' to list all available category plug-ins.
-    -V, --verbose         Print verbose logs.
-    -v, --version         Show program's version number and exit.
+  -c CONFIG_FILE, --conf=CONFIG_FILE
+                        Use an alternate config file. The default is
+                        './mastiff.conf'.
+  -h, --help            Show the help message and exit.
+  -l PLUGIN_TYPE, --list=PLUGIN_TYPE
+                        List all available plug-ins of the specified type and
+                        exit. Type must be one of 'analysis' or 'cat'.
+  -o OVERRIDE, --option=OVERRIDE
+                        Override a config file option. Configuration options
+                        should be specified as 'Section.Key=Value' and should
+                        be quoted if any whitespace is present. Multiple
+                        overrides can be specified by using multiple '-o'
+                        options.
+  -p PLUGIN_NAME, --plugin=PLUGIN_NAME
+                        Only run the specified analysis plug-in. Name must be
+                        quoted if it contains whitespace.
+  -q, --quiet           Only log errors.
+  -t FTYPE, --type=FTYPE
+                        Force file to be analyzed with plug-ins from the
+                        specified category (e.g., EXE, PDF, etc.). Run with
+                        '-l cat' to list all available category plug-ins.
+  -V, --verbose         Print verbose logs.
+  -v, --version         Show program's version number and exit.
 
+  Queue Options:
+    --append-queue      Append file or directory to job queue and exit.
+    --clear-queue       Clear job queue and exit.
+    --ignore-queue      Ignore the job queue and just process file.
+    --list-queue        List the contents of the job queue and exit.
+    --resume-queue      Continue processing the queue.
