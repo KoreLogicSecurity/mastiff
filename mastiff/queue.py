@@ -56,6 +56,10 @@ class MastiffQueue(object):
             'SELECT file FROM queue '
             'ORDER BY id LIMIT 1'
             )
+    _peek_all = (
+            'SELECT file FROM queue '
+            'ORDER BY id'
+             )
 
     def __init__(self, config):
         """ Initialize the class. """
@@ -98,6 +102,10 @@ class MastiffQueue(object):
         with self._get_conn() as conn:
             for my_id, obj_buffer in conn.execute(self._iterate):
                 yield loads(str(obj_buffer))
+                
+    def __str__(self):
+        """ Return contents of database. """
+        return '\n'.join(self)
 
     def _get_conn(self):
         """ Returns a connection to the database. """
