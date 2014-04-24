@@ -65,7 +65,8 @@ class PEInfo(exe.EXECat):
         try:
             pe = pefile.PE(filename)
         except:
-            log.error('Unable to parse PE file: %s' % sys.exc_info[0])
+            log.error('Unable to parse PE file: %s' % sys.exc_info()[1])
+            
             return False
 
         if not self.output_file_quick(config.get_var('Dir','log_dir'), pe) or not self.output_file_full(config.get_var('Dir','log_dir'), pe):
