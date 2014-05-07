@@ -90,7 +90,7 @@ class Conf:
         """Return a specified variable."""
         try:
             return self.config.get(section, var)
-        except ConfigParser.NoOptionError:
+        except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
             log = logging.getLogger('Mastiff.Conf.GetVar')
             log.error('Could not find "%s": "%s"', section, var)
             return None
@@ -99,10 +99,10 @@ class Conf:
         """Return a boolean variable."""
         try:
             return self.config.getboolean(section, var)
-        except ConfigParser.NoOptionError:
+        except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
             log = logging.getLogger('Mastiff.Conf.GetVar')
             log.error('Could not find "%s": "%s"', section, var)
-            return None
+            return False
 
     def get_section(self, section):
         """Return a dictionary of items within a section."""
