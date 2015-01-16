@@ -404,7 +404,8 @@ class Mastiff:
             log.info('Forcing category plug-in "%s" to be added.', ftype)
             self.cat_list.append(ftype)
 
-        # Grab the magic file type of the file.
+        # Grab the magic file type of the file. This is done here so as not
+        # to do it in every category plug-in.
         self.filetype['magic'] = FileType.get_magic(self.file_name)
 
         # Grab the TrID type

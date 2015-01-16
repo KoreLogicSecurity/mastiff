@@ -31,6 +31,11 @@ import subprocess
 import re
 import os
 
+try:
+    import yara
+except ImportError, error:
+    print "Could not import yara: %s" % error
+
 def get_magic(file_name):
     """ Determine the file type of a given file based on its magic result."""
 
@@ -62,7 +67,8 @@ def get_magic(file_name):
     return file_type
 
 def get_trid(file_name, trid, trid_db):
-    """ TrID is a file identification tool created by Marco Pontello.
+    """ DEPRECATED DO NOT USE
+        TrID is a file identification tool created by Marco Pontello.
         Unfortunately, TrID does not have a Linux library we can use, so we
         will run the program and store its results.
 
@@ -120,13 +126,29 @@ def get_trid(file_name, trid, trid_db):
 
     return results
 
+def yara_typecheck(filename, yara_rule):
+    """ Check for file type based on yara rule.
+         Returns True if found, False otherwise.
+    """
+
+    if yara_rule is None:
+        return False
+        
+    try:
+        rules = yara.compile(source=yara_rule)
+        matches = rules.match(filename, timeout=10)
+    except:
+        print "Error attempting to perform Yara filetype."
+        return False
+            
+    if len(matches) > 0:
+        return True
+        
+    return False
 
 if __name__ == '__main__':
     import sys
 
     if len(sys.argv) > 1:
         print get_magic(sys.argv[1])
-        print get_trid(sys.argv[1],
-                       '/usr/local/bin/trid',
-                       '/usr/local/etc/triddefs.trd')
 
