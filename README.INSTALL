@@ -28,6 +28,7 @@ TECHNICAL REQUIREMENTS
     - Yapsy 1.10 or greater (http://yapsy.sourceforge.net/)
     - Python sqlite3 (http://docs.python.org/library/sqlite3)
     - Python setuptools (http://pypi.python.org/pypi/setuptools/)
+    - Yara, libyara and yara-python (http://code.google.com/p/yara-project)
 
   A Python libmagic library is also required. MASTIFF supports two different
   libmagic libraries:
@@ -39,21 +40,6 @@ TECHNICAL REQUIREMENTS
      - Python-magic (https://github.com/ahupp/python-magic/)
            This may be installed through the source code above or via Python
            pip.
-
-  The following are optional but highly recommended:
-
-    - TrID executable and database (http://mark0.net/soft-trid-e.html)
-
-  NOTE: TrID has no source distribution, published hashes, or digital
-  signatures. The MD5/SHA256 hashes for the version utilized by the
-  project owners (v2.11) are:
-
-  MD5: 72b15ddf4aabff36529eb6c8d0dc927e
-  SHA256: b7f10d610ed321733fee6bc86bc6248bc4342dffab6dd350a251e7581c51f168
-
-  Analysis plug-ins may require additional libraries or programs
-  installed in order to function properly.  Please refer to plug-in
-  documentation for details.
 
 PREREQUISITES INSTALLATION
 
@@ -77,10 +63,6 @@ PREREQUISITES INSTALLATION
   also located in the Gentoo Portage repository.
 
     $ sudo emerge -av yapsy
-
-  TrID can be installed by downloading the program and its database
-  from the link provided above.  Be sure to point the mastiff.conf
-  trid and trid_db options to the correct location of the files.
 
   Note that the plug-ins utilized by MASTIFF may have their own
   prerequisites.
