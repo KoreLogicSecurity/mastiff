@@ -151,7 +151,7 @@ def yara_typecheck(filename, yara_rule):
         return False 
         
     if len(matches) > 0:
-        log.debug('File Type matches rule %s',  matches[0].rule)
+        log.debug('File Type matches rule %s', matches[0].rule)
         return True
         
     return False

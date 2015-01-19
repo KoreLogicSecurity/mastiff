@@ -38,7 +38,7 @@ class ZipCat(categories.MastiffPlugin):
         self.yara_filetype = """rule iszip {
 	    condition:
 		    uint32(0x0) == 0x04034b50
-        }"""	
+        }"""
 
     def is_my_filetype(self, id_dict, file_name):
         """Determine if the magic string is appropriate for this category"""

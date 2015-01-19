@@ -54,7 +54,7 @@ class EXECat(categories.MastiffPlugin):
 		    $MZ = "MZ"        
 	    condition:
 		    $MZ at 0 and uint32(uint32(0x3C)) == 0x00004550
-        }"""	
+        }"""
 
     def is_exe(self, filename):
         """ Look to see if the filename has the header format we expect,"""
@@ -65,7 +65,7 @@ class EXECat(categories.MastiffPlugin):
                 return False
 
             exe_file.seek(0x3c)
-            offset =  struct.unpack('<i',  exe_file.read(4))
+            offset =  struct.unpack('<i', exe_file.read(4))
             if offset[0] > 1024:
                 # seems a bit too far - we'll stop just in case
                 return False
