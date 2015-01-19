@@ -27,6 +27,7 @@ __init__(): MANDATORY: Any initialization code the category requires. It must
 __version__ = "$Id$"
 
 import mastiff.plugins.category.categories as categories
+import mastiff.filetype as FileType
 
 # Change the class name to identify the new file type
 class SkelCat(categories.MastiffPlugin):
@@ -40,6 +41,8 @@ class SkelCat(categories.MastiffPlugin):
         self.cat_name = 'SkelCat'
         # Add in strings from libmagic and TrID output
         self.my_types = [ 'libmagic string', 'TrID string' ]
+        # Add in the Yara rule
+        self.yara_filetype = """rule istype { } """
 
     def is_my_filetype(self, id_dict, file_name):
         """Determine if the magic string is appropriate for this category"""
@@ -47,8 +50,13 @@ class SkelCat(categories.MastiffPlugin):
         # check magic string first
         if [ type_ for type_ in self.my_types if type_ in id_dict['magic']]:
             return self.cat_name
+        
+        # run Yara type check
+        if FileType.yara_typecheck(file_name, self.yara_filetype) is True:
+            return self.cat_name
 
-        # check TrID output
+        # check TrID output, if available
+        # this can likely be removed
         for (percent, desc) in id_dict['trid']:
             for type_ in self.my_types:
                 # make sure percent is high enough and trid string matches
