@@ -429,7 +429,6 @@ class Mastiff:
         if self.db is not None:
             DB.insert_mastiff_item(self.db,  self.hashes, self.cat_list)
 
-
         return self.filetype
 
     def validate(self, name, plugin):

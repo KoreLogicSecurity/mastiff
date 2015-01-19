@@ -25,9 +25,10 @@ __init__(): MANDATORY: Any initialization code the category requires. It must
 
 is_my_filetype(id_dict, file_name): MANDATORY: This function will return
             the cat_name if the given id_dict contains one of the
-            file types this category can examine. The file_name is also given
-            so additional tests can be performed, if required. None should be
-            returned if it does not analyze this type.
+            file types this category can examine, or the yara rule matches the
+            file type. The file_name is also given so additional tests can be
+            performed, if required. None should be returned if it does not 
+            analyze this type.
 """
 
 __version__ = "$Id$"

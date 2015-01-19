@@ -26,6 +26,7 @@ class MastiffPlugin(IPlugin):
         IPlugin.__init__(self)
         self.name = name
         self.prereq = None
+        self.yara_filetype = None
 
     def activate(self):
         """Power rings activate! Form of Mastiff Plugin!"""

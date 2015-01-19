@@ -130,18 +130,28 @@ def yara_typecheck(filename, yara_rule):
     """ Check for file type based on yara rule.
          Returns True if found, False otherwise.
     """
-
+    log = logging.getLogger('Mastiff.FileType.Yara')
+    
     if yara_rule is None:
         return False
         
     try:
         rules = yara.compile(source=yara_rule)
-        matches = rules.match(filename, timeout=10)
+    except yara.SyntaxError, err:
+        log.error('Rule Error: %s', error)
+        return False
     except:
-        print "Error attempting to perform Yara filetype."
+        log.error("Error attempting to perform Yara filetype.")
         return False
             
+    try:
+        matches = rules.match(filename, timeout=10)        
+    except yara.Error, err:
+        log.error('Yara error: %s', err)
+        return False 
+        
     if len(matches) > 0:
+        log.debug('File Type matches rule %s',  matches[0].rule)
         return True
         
     return False
