@@ -410,9 +410,12 @@ class Mastiff:
 
         # Grab the TrID type
         trid_opts = self.config.get_section('File ID')
-        self.filetype['trid'] = FileType.get_trid(self.file_name,
+        if trid_opts['trid']:
+            self.filetype['trid'] = FileType.get_trid(self.file_name,
                                                   trid_opts['trid'],
                                                   trid_opts['trid_db'])
+        else:
+            self.filetype['trid'] = list()
 
         # Cycle through all of the categories and see if they should be added
         # to the list of categories to be run.

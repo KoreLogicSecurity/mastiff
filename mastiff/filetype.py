@@ -67,7 +67,7 @@ def get_magic(file_name):
     return file_type
 
 def get_trid(file_name, trid, trid_db):
-    """ DEPRECATED DO NOT USE
+    """ DEPRECATING: RECOMMENDED NOT TO USE
         TrID is a file identification tool created by Marco Pontello.
         Unfortunately, TrID does not have a Linux library we can use, so we
         will run the program and store its results.

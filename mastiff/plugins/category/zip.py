@@ -24,6 +24,7 @@ __version__ = "$Id$"
 
 import zipfile
 import mastiff.plugins.category.categories as categories
+import mastiff.filetype as FileType
 
 class ZipCat(categories.MastiffPlugin):
     """ Category class for Zip documents."""
@@ -34,6 +35,10 @@ class ZipCat(categories.MastiffPlugin):
 
         self.cat_name = 'ZIP'
         self.my_types = [ 'Zip archive', 'ZIP compressed archive' ]
+        self.yara_filetype = """rule iszip {
+	    condition:
+		    uint32(0x0) == 0x04034b50
+        }"""	
 
     def is_my_filetype(self, id_dict, file_name):
         """Determine if the magic string is appropriate for this category"""
@@ -46,11 +51,9 @@ class ZipCat(categories.MastiffPlugin):
         if [ type_ for type_ in self.my_types if type_ in id_dict['magic']]:
             return self.cat_name
 
-        # check TrID output
-        for (percent, desc) in id_dict['trid']:
-            for type_ in self.my_types:
-                if type_ in desc and percent > 75:
-                    return self.cat_name
+        # run Yara type check
+        if FileType.yara_typecheck(file_name, self.yara_filetype) is True:
+            return self.cat_name
 
         return None
 

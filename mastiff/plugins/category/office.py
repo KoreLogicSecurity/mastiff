@@ -27,6 +27,7 @@ __init__(): MANDATORY: Any initialization code the category requires. It must
 __version__ = "$Id$"
 
 import mastiff.plugins.category.categories as categories
+import mastiff.filetype as FileType
 
 class OfficeCat(categories.MastiffPlugin):
     """Category class for Microsoft Office files."""
@@ -43,21 +44,22 @@ class OfficeCat(categories.MastiffPlugin):
                           'Microsoft PowerPoint',
                           'Microsoft Office Document'
                           ]
+        self.yara_filetype="""rule isOleDoc {
+	    condition:
+		    ( uint32(0x0) == 0xe011cfd0 and uint32(0x4) == 0xe11ab1a1 ) or
+		    // some old beta versions have this signature
+		    ( uint32(0x0) == 0x0dfc110e and uint32(0x4) == 0x0e11cfd0 )
+        }"""
 
     def is_my_filetype(self, id_dict, file_name):
         """Determine if magic string is appropriate for this category."""
 
         if [ type_ for type_ in self.my_types if type_ in id_dict['magic']]:
             return self.cat_name
-
-        # check TrID output
-        for (percent, desc) in id_dict['trid']:
-            for type_ in self.my_types:
-                # make sure percent is high enough and trid string matches
-                # 30% appears to be a good line for Office documents
-                if type_ in desc and percent > 30:
-                    return self.cat_name
-
-        # May do more here with the filename...perhaps check the extension?
+            
+        # run Yara type check
+        if FileType.yara_typecheck(file_name, self.yara_filetype) is True:
+            return self.cat_name
+        
         return None
 
