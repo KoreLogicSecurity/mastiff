@@ -67,10 +67,14 @@ class GenFuzzy(gen.GenericCat):
             log.error('Could not generate fuzzy hash: %s', err)
             return False
 
-        if self.output_db(config, my_fuzzy) == False:
+        if self.output_db(config, my_fuzzy) is False:
             return False
-
-        self.compare_hashes(config, my_fuzzy)
+        
+        fuzz_results = list()
+        if config.get_bvar(self.name, 'compare') is True:
+            fuzz_results = self.compare_hashes(config, my_fuzzy)
+            
+        self.output_file(config, my_fuzzy, fuzz_results)
 
         return True
 
@@ -96,19 +100,28 @@ class GenFuzzy(gen.GenericCat):
                     fuzz_results.append([results[0], percent])
         except sqlite3.OperationalError, err:
             log.error('Could not grab other fuzzy hashes: %s', err)
-            return False
+            return None
         except pydeep.error, err:
             log.error('pydeep error: %s', err)
+            return None
+            
+        return fuzz_results
 
+    def output_file(self, config, my_fuzzy, fuzz_results):
+        """ Writes output to a file. """
+        
+        log = logging.getLogger('Mastiff.Plugins.' + self.name + '.output_file')
+        
         # print out results
         my_file = open(config.get_var('Dir', 'log_dir') + os.sep + 'fuzzy.txt', 'w')
         my_file.write('Fuzzy Hash: %s\n\n' % my_fuzzy)
-        if len(fuzz_results) > 0:
+        if fuzz_results is not None and len(fuzz_results) > 0:
             my_file.write('This file is similar to the following files:\n\n')
             my_file.write('{0:35}\t{1:10}\n'.format('MD5', 'Percent'))
             for (md5,  percent) in fuzz_results:
                 my_file.write('{0:35}\t{1:3}\n'.format(md5, percent))
-        else:
+        elif config.get_bvar(self.name, 'compare') is True:
+            # This only gets printed if we actually compared
             my_file.write('No other fuzzy hashes were related to this file.\n')
 
         my_file.close()
