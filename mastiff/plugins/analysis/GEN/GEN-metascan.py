@@ -88,7 +88,7 @@ class GenMetascan(gen.GenericCat):
 
         json = response.read()
         try:
-            response_dict = simplejson.loads(json)
+            response_dict = simplejson.loads(json)            
         except simplejson.decoder.JSONDecodeError:
             log.error('Error in Metascan Online JSON response. Are you submitting too fast?')
             return None
@@ -204,11 +204,11 @@ class GenMetascan(gen.GenericCat):
 
             for av_key in sorted(response['scan_results']['scan_details'].keys(), key=lambda s: s.lower()):
 
-                if response['scan_results']['scan_details'][av_key]['scan_result_i'] > 0:
+                if response['scan_results']['scan_details'][av_key]['scan_result_i'] > 0:                    
                     out_str = '{0:22} {1:24} {2:40}\n'
                     out_str = out_str.format(av_key, \
                                              response['scan_results']['scan_details'][av_key]['def_time'], \
-                                             response['scan_results']['scan_details'][av_key]['threat_found'])
+                                             response['scan_results']['scan_details'][av_key]['threat_found'].encode('utf-8'))
                     mo_file.write(out_str)
 
         mo_file.close()
