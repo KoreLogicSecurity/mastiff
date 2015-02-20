@@ -86,6 +86,8 @@ import hashlib
 from shutil import copyfile
 from operator import attrgetter
 
+import simplejson
+
 if sys.version_info < (2, 6, 6):
     sys.stderr.write("Mastiff requires python version 2.6.6")
     sys.exit(1)
@@ -101,7 +103,7 @@ import mastiff.filetype as FileType
 import mastiff.sqlite as DB
 import mastiff.plugins.category.categories as Cats
 import mastiff.plugins.analysis as analysis
-
+import mastiff.plugins.output as masOutput
 
 class Mastiff:
     """Primary class for the static analysis inspection framework."""
@@ -116,13 +118,13 @@ class Mastiff:
         log.setLevel(loglevel)
         if log.handlers:
             log.handlers = []
-                
+
         # read in config file
         self.config = Conf.Conf(config_file, override=override)
 
         # make sure base logging dir exists
         log_dir = self.config.get_var('Dir','log_dir')
-        log_dir = os.path.abspath(os.path.expanduser(log_dir))        
+        log_dir = os.path.abspath(os.path.expanduser(log_dir))
         if not os.path.isdir(log_dir):
             try:
                 os.makedirs(log_dir)
@@ -145,6 +147,7 @@ class Mastiff:
 
         # get path to category plugins
         self.cat_paths = [ os.path.dirname(Cats.__file__) ]
+        self.output_paths = [ os.path.dirname(masOutput.__file__) ]
 
         # convert plugin paths to list
         self.plugin_paths = [ os.path.dirname(analysis.__file__)]
@@ -162,6 +165,7 @@ class Mastiff:
         # Build the managers
         self.cat_manager = PluginManager()
         self.plugin_manager = PluginManager()
+        self.output_manager = PluginManager()
 
         # Find and load all category plugins
         cat_filter = dict()
@@ -204,14 +208,21 @@ class Mastiff:
         self.plugin_manager.setCategoriesFilter( cat_filter )
         self.plugin_manager.collectPlugins()
 
+        # Finally collect all output plugins
+        self.output_manager.setPluginPlaces(self.output_paths)
+        self.output_manager.collectPlugins()
+
         # set up database
         self.db = DB.open_db_conf(self.config)
         DB.create_mastiff_tables(self.db)
 
+        # set up the output object
+        self.output = dict()
+
         # init the filename if we have it
         if fname is not None:
             self.init_file(fname)
-            
+
     def __del__(self):
         """
            Class destructor.
@@ -219,10 +230,10 @@ class Mastiff:
         # Close down all logging file handles so we don't have any open file descriptors
         log = logging.getLogger("Mastiff")
         handles = list(log.handlers)
-        for file_handle in handles:   
+        for file_handle in handles:
             log.removeHandler(file_handle)
             file_handle.close()
-        
+
     def init_file(self, fname):
         """
            Validate the filename to ensure it can be accessed and set
@@ -251,6 +262,8 @@ class Mastiff:
                       hashlib.sha256(data).hexdigest()
         self.config.set_var('Misc',  'hashes',  self.hashes)
 
+        self.output[self.hashes] = dict()
+
         # update log_dir
         log_dir = os.path.abspath(os.path.expanduser(self.config.get_var('Dir','log_dir'))) + \
                   os.sep + \
@@ -271,10 +284,10 @@ class Mastiff:
         fh = logging.FileHandler(log_dir + os.sep + 'mastiff.log' )
         format_ = '[%(asctime)s] [%(levelname)s] [%(name)s] : %(message)s'
         fh.setFormatter(logging.Formatter(format_))
-        log.addHandler(fh)        
+        log.addHandler(fh)
         fh.setLevel(logging.INFO)
 
-        log = logging.getLogger("Mastiff.Init_File")        
+        log = logging.getLogger("Mastiff.Init_File")
         log.info('Analyzing %s.',  self.file_name)
         log.info("Log Directory: %s", log_dir)
 
@@ -307,6 +320,8 @@ class Mastiff:
 
             log = logging.getLogger('Mastiff.Plugins.Activate')
             log.debug('Activating plugins for category %s.', cats)
+
+            self.output[self.hashes][cats] = dict()
 
             for plugin in self.plugin_manager.getPluginsOfCategory(cats):
 
@@ -351,6 +366,14 @@ class Mastiff:
             log.debug("Plugin %s not activated due to missing pre-req \"%s.\"" % \
                       (plugins[1].name, plugins[1].plugin_object.prereq ))
 
+        # finally activate the output plugins
+        for plugin in self.output_manager.getAllPlugins():
+            plugin.plugin_object.set_name(plugin.name)
+            log.debug('Activating Output Plug-in "{}"'.format(plugin.name))
+            self.output_manager.activatePluginByName(plugin.name)
+            #self.activated_plugins.append(plugin)
+
+
     def list_plugins(self, ctype='analysis'):
         """Print out a list of analysis or cat plugins."""
 
@@ -377,6 +400,17 @@ class Mastiff:
                 print "%-25s\t%-15s\t%-s" % \
                       (plugin.name, plugin.plugin_object.cat_name,
                        plugin.description)
+        elif ctype == 'output':
+            print "Output Plug-in list:\n"
+            print "%-25s\t%-s\n%s" % ("Name", "Description", "Path")
+            print '-' * 80
+            # category plug-ins
+            for plugin in sorted(self.output_manager.getAllPlugins(),
+                                 key=attrgetter('name')):
+                print "%-25s\t%-s\n%-80s\n" % \
+                      (plugin.name, plugin.description, plugin.path)
+        else:
+            print "Unknown plugin type."
 
     def set_filetype(self, fname=None, ftype=None):
         """
@@ -489,10 +523,23 @@ class Mastiff:
                 continue
 
             log.debug('Calling plugin "%s".', plugin.name)
-            plugin.plugin_object.analyze(self.config, self.file_name)
 
+            # universal output test
+
+            plug_out = plugin.plugin_object.analyze(self.config, self.file_name)
+            # TODO FIX THE LAST ONE?
+            if plug_out is not False and plug_out is not None and isinstance(plug_out, masOutput.page):
+                #print plugin.plugin_object.name
+                #self.output[self.hashes][plugin.plugin_object.cat_name][plugin.plugin_object.name] = dict()
+                self.output[self.hashes][plugin.plugin_object.cat_name][plugin.plugin_object.name] = plug_out
+
+        # go through output plugins and output the data
+        for plugin in self.output_manager.getAllPlugins():
+            plugin.plugin_object.output(self.config, self.output)
 
         self.config.dump_config()
+
+        #log.info(simplejson.dumps(self.output, indent=4*' '))
         log.info('Finished analysis for %s.', self.file_name)
 
 # end class mastiff

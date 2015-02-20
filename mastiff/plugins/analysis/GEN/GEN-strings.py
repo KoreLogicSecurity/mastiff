@@ -23,9 +23,9 @@ Purpose:
 Configuration Options:
 
   strcmd = Path to the strings binary
-  
+
   DO NOT CHANGE THE FOLLOWING OPTIONS UNLESS YOU KNOW WHAT YOU ARE DOING.
-  str_opts = Options to send to strings every time its called. 
+  str_opts = Options to send to strings every time its called.
                    This should be set to "-a -t d" (without quotes).
   str_uni = Options to send to strings to obtain UNICODE strings.
                  This should be set to "-e l" (without quotes).
@@ -51,6 +51,7 @@ class GenStrings(gen.GenericCat):
         """Initialize the plugin."""
         gen.GenericCat.__init__(self)
         self.strings = {}
+        self.page_data.meta['filename'] = 'strings'
 
     def _insert_strings(self, output, str_type):
         """Insert output from strings command into self.strings list."""
@@ -80,7 +81,7 @@ class GenStrings(gen.GenericCat):
            not os.access(str_opts['strcmd'], os.X_OK):
             log.error('%s is not accessible. Skipping.')
             return None
-            
+
         if not str_opts['str_opts'] or not str_opts['str_uni_opts']:
             log.error('Strings options do not exist. Please check config. Exiting.')
             return None
@@ -96,7 +97,7 @@ class GenStrings(gen.GenericCat):
         if error is not None and len(error) > 0:
             log.error('Error running program: %s' % error)
             return False
-            
+
         self._insert_strings(output,'A')
 
         # obtain Unicode strings
@@ -104,36 +105,31 @@ class GenStrings(gen.GenericCat):
                                str_opts['str_opts'].split() + str_opts['str_uni_opts'].split() + [ filename ],
                                stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, 
+                               stderr=subprocess.PIPE,
                                close_fds=True)
         (output, error) = run.communicate()
         if error is not None and len(error) > 0:
             log.error('Error running program: %s' % error)
             return False
-        
+
         self._insert_strings(output,'U')
 
-        self.output_file(config.get_var('Dir','log_dir'))
+        self.gen_output(config.get_var('Dir','log_dir'))
         log.debug ('Successfully grabbed strings.')
 
-        return self.strings
+        return self.page_data
 
-    def output_file(self, outdir):
-        """Place the extracted strings into a file."""
+    def gen_output(self, outdir):
+        """Place the results into a Mastiff Output Page."""
         log = logging.getLogger('Mastiff.Plugins.' + self.name)
 
-        try:
-            str_file = open(outdir + os.sep + "strings.txt",'w')
-        except IOError, err:
-            log.error('Write error: %s', err)
-            return False
+        # self.page_data was previously initialized
+        # add a table to it
+        str_table = self.page_data.addTable('Embedded Strings')
+        str_table.addheader(['Offset', 'Type', 'String'])
 
         for k in sorted(self.strings.iterkeys()):
-            str_file.write("%x %s %s\n" % (k,
-                                           self.strings[k][0],
-                                           self.strings[k][1]))
+            str_table.addrow([ '{:0x}'.format(k), self.strings[k][0], self.strings[k][1] ])
 
-
-        str_file.close()
         return True
 

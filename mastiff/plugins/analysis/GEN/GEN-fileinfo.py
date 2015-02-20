@@ -50,6 +50,7 @@ class GenFileInfo(gen.GenericCat):
     def __init__(self):
         """Initialize the plugin."""
         gen.GenericCat.__init__(self)
+        self.page_data.meta['filename'] = 'file_info'
 
     def analyze(self, config, filename):
         """Analyze the file."""
@@ -66,8 +67,25 @@ class GenFileInfo(gen.GenericCat):
         data['time'] = time.time()
         data['hashes'] = config.get_var('Misc',  'hashes')
 
+        self.gen_output(config, data)
+
         self.output_db(config, data)
-        return True
+        return self.page_data
+
+    def gen_output(self, config, data):
+        """ Add the output into the local page structure. """
+        info_table = self.page_data.addTable('File Information')
+        info_table.addheader(['name','info'], printHeader=False)
+
+        info_table.addrow(['File Name', data['filename']])
+        info_table.addrow(['Size', data['size']])
+        info_table.addrow(['Time Analyzed', data['time']])
+
+        hash_table = self.page_data.addTable('File Hashes')
+        hash_table.addheader(['Algorithm', 'Hash'])
+        hash_table.addrow(['MD5', data['hashes'][0]])
+        hash_table.addrow(['SHA1', data['hashes'][1]])
+        hash_table.addrow(['SHA256', data['hashes'][2]])
 
     def output_db(self, config, data):
         """Print output from analysis to a file."""

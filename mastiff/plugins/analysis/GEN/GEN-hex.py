@@ -58,7 +58,7 @@ class GEN_Hex(gen.GenericCat):
         # make sure we are enabled
         if config.get_bvar(self.name, 'enabled') is False:
             log.info('Disabled. Exiting.')
-            return True
+            return False
         
         try:
             in_file = open(filename, 'rb')

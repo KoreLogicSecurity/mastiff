@@ -1,0 +1,10 @@
+[Core]
+Name = Text Output
+Module = OUTPUT-text
+
+[Documentation]
+Description = Dumps output in text format.
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0
