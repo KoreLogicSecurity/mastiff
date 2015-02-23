@@ -66,10 +66,10 @@ class GenMetascan(gen.GenericCat):
 
         url = "https://hashlookup.metascan-online.com/v2/hash/" + sha256
         headers = { 'apikey' : self.api_key}
-        
+
         # set up request
         log.debug('Submitting request to Metascan Online.')
-        
+
         try:
             req = urllib2.Request(url, headers=headers)
             response = urllib2.urlopen(req, timeout=30)
@@ -88,7 +88,7 @@ class GenMetascan(gen.GenericCat):
 
         json = response.read()
         try:
-            response_dict = simplejson.loads(json)            
+            response_dict = simplejson.loads(json)
         except simplejson.decoder.JSONDecodeError:
             log.error('Error in Metascan Online JSON response. Are you submitting too fast?')
             return None
@@ -118,14 +118,14 @@ class GenMetascan(gen.GenericCat):
             mo_file.write('File not submitted because submission disabled.\n')
             mo_file.close()
             return False
-        
+
         log.info('File had not been analyzed by Metascan Online.')
         log.info('Sending file to Metascan Online.')
 
         # send file to Metascan Online
         url = "https://scan.metascan-online.com/v2/file"
         headers = { 'apikey' : self.api_key, 'filename': os.path.basename(filename)}
-        
+
         try:
             req = urllib2.Request(url, headers=headers)
             file_to_send = open(filename, "rb").read()
@@ -166,7 +166,7 @@ class GenMetascan(gen.GenericCat):
             return False
 
         sha256 = config.get_var('Misc', 'hashes')[2]
-    
+
         response = self.retrieve(sha256)
         if response is None:
             # error occurred
@@ -192,24 +192,36 @@ class GenMetascan(gen.GenericCat):
             log.error('Unable to open %s for writing: %s',
                       outdir + 'metascan-online.txt', err)
             return False
-            
-        mo_file.write('Metascan Online Results for %s\n' % response['file_info']['md5'])
-        mo_file.write('Last scan date: %s\n' % response['scan_results']['start_time'])
-        mo_file.write('Total positive results: %d/%d\n' % \
-                      (response['scan_results']['scan_all_result_i'], response['scan_results']['total_avs']))
-        mo_file.write('Link to metascan-online.com:\nhttps://scan.metascan-online.com/v2/file/%s\n\n' % response['data_id'])
+
+        out_str = ''
+        result_str = ''
+
+        out_str += 'Metascan Online Results for %s\n' % response['file_info']['md5']
+        out_str += 'Last scan date: %s\n' % response['scan_results']['start_time']
+
+        foundAV = 0
 
         if response['scan_results']['scan_all_result_i'] > 0:
-            mo_file.write('{0:22} {1:24} {2:40}\n'.format('AV', 'Version', 'Results'))
+            result_str += '{0:22} {1:24} {2:40}\n'.format('AV', 'Version', 'Results')
 
             for av_key in sorted(response['scan_results']['scan_details'].keys(), key=lambda s: s.lower()):
 
-                if response['scan_results']['scan_details'][av_key]['scan_result_i'] > 0:                    
-                    out_str = '{0:22} {1:24} {2:40}\n'
-                    out_str = out_str.format(av_key, \
+                # scan_result_i should be 1-9 (10 is engine updating)
+                if 10 > response['scan_results']['scan_details'][av_key]['scan_result_i'] > 0 :
+                    threat_name = response['scan_results']['scan_details'][av_key]['threat_found'].encode('utf-8')
+                    if threat_name == u'':
+                        threat_name = u'Unknown Threat'
+
+                    result_str += '{0:22} {1:24} {2:40}\n'.format(av_key, \
                                              response['scan_results']['scan_details'][av_key]['def_time'], \
-                                             response['scan_results']['scan_details'][av_key]['threat_found'].encode('utf-8'))
-                    mo_file.write(out_str)
+                                             threat_name)
+                    foundAV += 1
+
+        out_str += 'Total positive results: %d/%d\n' % (foundAV, response['scan_results']['total_avs'])
+        out_str += 'Link to metascan-online.com:\nhttps://www.metascan-online.com/en/scanresult/file/%s\n\n' % response['data_id']
+
+        mo_file.write(out_str)
+        mo_file.write(result_str)
 
         mo_file.close()
         return True
