@@ -23,7 +23,7 @@ This file contains package-level variables and functions.
 
 __version__ = "$Id$"
 
-version = 0x00700003
+version = 0x00700004
 
 def get_release_number():
     """ Gets the current release version. """
