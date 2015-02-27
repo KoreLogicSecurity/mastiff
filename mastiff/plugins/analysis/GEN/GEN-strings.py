@@ -23,9 +23,9 @@ Purpose:
 Configuration Options:
 
   strcmd = Path to the strings binary
-  
+
   DO NOT CHANGE THE FOLLOWING OPTIONS UNLESS YOU KNOW WHAT YOU ARE DOING.
-  str_opts = Options to send to strings every time its called. 
+  str_opts = Options to send to strings every time its called.
                    This should be set to "-a -t d" (without quotes).
   str_uni = Options to send to strings to obtain UNICODE strings.
                  This should be set to "-e l" (without quotes).
@@ -80,7 +80,7 @@ class GenStrings(gen.GenericCat):
            not os.access(str_opts['strcmd'], os.X_OK):
             log.error('%s is not accessible. Skipping.')
             return None
-            
+
         if not str_opts['str_opts'] or not str_opts['str_uni_opts']:
             log.error('Strings options do not exist. Please check config. Exiting.')
             return None
@@ -96,7 +96,7 @@ class GenStrings(gen.GenericCat):
         if error is not None and len(error) > 0:
             log.error('Error running program: %s' % error)
             return False
-            
+
         self._insert_strings(output,'A')
 
         # obtain Unicode strings
@@ -104,13 +104,13 @@ class GenStrings(gen.GenericCat):
                                str_opts['str_opts'].split() + str_opts['str_uni_opts'].split() + [ filename ],
                                stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, 
+                               stderr=subprocess.PIPE,
                                close_fds=True)
         (output, error) = run.communicate()
         if error is not None and len(error) > 0:
             log.error('Error running program: %s' % error)
             return False
-        
+
         self._insert_strings(output,'U')
 
         self.output_file(config.get_var('Dir','log_dir'))
@@ -127,6 +127,10 @@ class GenStrings(gen.GenericCat):
         except IOError, err:
             log.error('Write error: %s', err)
             return False
+
+        if len(self.strings) == 0:
+            log.warn("No embedded strings detected.")
+            str_file.write("No embedded strings detected.")
 
         for k in sorted(self.strings.iterkeys()):
             str_file.write("%x %s %s\n" % (k,
