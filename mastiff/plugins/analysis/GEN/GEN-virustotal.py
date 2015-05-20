@@ -124,7 +124,8 @@ class GenVT(gen.GenericCat):
         # make sure we are allowed to submit
         if config.get_bvar(self.name, 'submit') == False:
             log.info('Submission disabled. Not sending file.')
-            vt_file.write('File not submitted because submission disabled.\n')
+            vt_file.write('File does not exist on VirusTotal.\n')
+            vt_file.write('Submission is disabled, not sending file.\n')
             vt_file.close()
             return False
 

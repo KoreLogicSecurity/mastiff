@@ -115,7 +115,8 @@ class GenMetascan(gen.GenericCat):
         # make sure we are allowed to submit
         if config.get_bvar(self.name, 'submit') == False:
             log.info('Submission disabled. Not sending file.')
-            mo_file.write('File not submitted because submission disabled.\n')
+            mo_file.write('File does not exist on Metascan Online.\n')
+            mo_file.write('Submission is disabled, not sending file.\n')
             mo_file.close()
             return False
 
