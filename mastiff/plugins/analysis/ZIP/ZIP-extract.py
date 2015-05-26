@@ -33,6 +33,7 @@ __version__ = "$Id$"
 import logging
 import os
 import zipfile
+import struct
 
 import mastiff.plugins.category.zip as zip
 import mastiff.queue as queue
@@ -76,7 +77,7 @@ class ZipExtract_u(zip.ZipCat):
 
         try:
             my_zip = zipfile.ZipFile(filename, 'r', allowZip64=True)
-        except (zipfile.BadZipfile, IOError), err:
+        except (zipfile.BadZipfile, IOError, struct.error), err:
             log.error('Unable to open zip file: %s' % err)
             return False
 

@@ -39,6 +39,8 @@ def open_db(db_name):
     except sqlite3.OperationalError, err:
         log.error('Cannot access sqlite DB: %s.',  err)
         db  = None
+        
+    db.text_factory = str
 
     return db
 

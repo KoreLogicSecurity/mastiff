@@ -35,6 +35,7 @@ import os
 import logging
 import zipfile
 import codecs
+import struct
 
 import mastiff.plugins.category.zip as zip
 
@@ -66,13 +67,13 @@ class ZipInfo_u(zip.ZipCat):
         try:
             my_zip = zipfile.ZipFile(filename, 'r')
             info_list = my_zip.infolist()
-        except (zipfile.BadZipfile, IOError), err:
+        except (zipfile.BadZipfile, IOError, struct.error), err:
             log.error('Unable to open or process zip file: %s' \
                       % err)
             return False
 
 
-        out_str = u"File Name: %s\n" % (os.path.basename(filename))
+        out_str = u"File Name: {}\n".format(os.path.basename(filename.decode('utf-8', 'replace')))
         if my_zip.comment is None or len(my_zip.comment) == 0:
             out_str += "This file has no comment.\n\n"
         else:
@@ -105,7 +106,7 @@ class ZipInfo_u(zip.ZipCat):
 
             output += u'{0:19} {1:<10} {2:35}\n'.format(date_str, \
                                                        file_info.file_size, \
-                                                       filename)
+                                                       filename.decode('utf-8', 'replace'))
 
 
         return output
@@ -223,7 +224,7 @@ class ZipInfo_u(zip.ZipCat):
 
         try:
             for file_info in info_list:
-                output += u"{0:24}".format("File Name:") + "%s\n" % file_info.filename
+                output += u"{0:24}".format("File Name:") + "%s\n" % file_info.filename.decode('utf-8', 'replace')
 
                 date_str = "%d/%d/%d %d:%d:%d" % \
                 (file_info.date_time[1], file_info.date_time[2], file_info.date_time[0], \
@@ -260,7 +261,7 @@ class ZipInfo_u(zip.ZipCat):
                 output += "\n\n"
 
         except ImportError:
-            log.error('Error obtaining file information from archive for %s.' % file_info.filename)
+            log.error('Error obtaining file information from archive for %s.' % file_info.filename.decode('utf-8', 'replace'))
 
         return output
 

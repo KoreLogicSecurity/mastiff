@@ -44,8 +44,13 @@ class ZipCat(categories.MastiffPlugin):
         """Determine if the magic string is appropriate for this category"""
 
         # Use the python library first
-        if zipfile.is_zipfile(file_name) is True:
-            return self.cat_name
+        try:
+            # there are times where is_zipfile returns true for non-zipfiles
+            # so we have to try and open it as well
+            if zipfile.is_zipfile(file_name) is True:
+                return self.cat_name
+        except:
+            return None
 
         # check magic string next
         if [ type_ for type_ in self.my_types if type_ in id_dict['magic']]:
