@@ -24,7 +24,7 @@ if sys.version_info < (2, 6, 6):
 setup(
     author='Tyler Hudak',
     author_email='mastiff-project@korelogic.com',
-    data_files=[('config', ['/etc/mastiff/mastiff.conf'])],
+    data_files=[('/etc/mastiff', ['mastiff.conf'])],
     description="""MASTIFF is a static analysis automation framework.""",
     install_requires=['Yapsy == 1.10, !=1.10-python3'],
     license='Apache License V2.0',
