@@ -136,24 +136,23 @@ class table(object):
 
         # go through the data and add to the table
         if row is not None:
+            # The data should be an iterable.
+            try:
+                if len(row) != len(self.header):
+                    raise TableError('Row length ({0}) does not equal header length ({1}).'.format(len(row), len(self.header)))
+        
+                # Currently the index (row position in the table) is by the order the data is received
+                # TODO: Take in an index
+                rowlist = [self.INDEX]
+                self.INDEX += 1
 
-        # The data should be an iterable.
-         try:
-            if len(row) != len(self.header):
-                raise TableError('Row length ({0}) does not equal header length ({1}).'.format(len(row), len(self.header)))
+                for item in row:
+                    rowlist.append(item)
 
-            # Currently the index (row position in the table) is by the order the data is received
-            # TODO: Take in an index
-            rowlist = [self.INDEX]
-            self.INDEX += 1
-
-            for item in row:
-                rowlist.append(item)
-
-            # create and add named tuple into self.rows
-            self.rows.append(self.rowdef._make(rowlist))
-         except TypeError:
-            raise TypeError('Invalid type given for data.')
+                # create and add named tuple into self.rows
+                self.rows.append(self.rowdef._make(rowlist))
+            except TypeError:
+                raise TypeError('Invalid type given for data.')
 
 class page(object):
     """

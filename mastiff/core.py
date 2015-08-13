@@ -131,7 +131,7 @@ class Mastiff:
             except OSError, err:
                 log.error('Could not make %s: %s. Exiting.', log_dir, err)
                 sys.exit(1)
-        self.config.set_var('Dir',  'base_dir',  log_dir)
+        self.config.set_var('Dir', 'base_dir', log_dir)
 
         # set up file to log output to
         fh = logging.FileHandler(log_dir + os.sep + 'mastiff.log' )
@@ -265,7 +265,7 @@ class Mastiff:
         self.hashes = hashlib.md5(data).hexdigest(), \
                       hashlib.sha1(data).hexdigest(), \
                       hashlib.sha256(data).hexdigest()
-        self.config.set_var('Misc',  'hashes',  self.hashes)
+        self.config.set_var('Misc', 'hashes', self.hashes)
 
         self.output[self.hashes] = dict()
 
@@ -293,7 +293,7 @@ class Mastiff:
         fh.setLevel(logging.INFO)
 
         log = logging.getLogger("Mastiff.Init_File")
-        log.info('Analyzing %s.',  self.file_name)
+        log.info('Analyzing %s.', self.file_name)
         log.info("Log Directory: %s", log_dir)
 
         # copy file to the log directory
@@ -309,11 +309,11 @@ class Mastiff:
         # add entry to database if it exists
         if self.db is not None:
             log.debug('Adding entry to database.')
-            DB.insert_mastiff_item(self.db,  self.hashes)
+            DB.insert_mastiff_item(self.db, self.hashes)
 
         return self.hashes
 
-    def activate_plugins(self,  single_plugin=None):
+    def activate_plugins(self, single_plugin=None):
         """
            Activate all plugins that are in the categories we selected.
            If single_plugin is given, only activate that plug-in.
@@ -470,7 +470,7 @@ class Mastiff:
 
         # add file type to the DB
         if self.db is not None:
-            DB.insert_mastiff_item(self.db,  self.hashes, self.cat_list)
+            DB.insert_mastiff_item(self.db, self.hashes, self.cat_list)
 
         return self.filetype
 
@@ -499,7 +499,7 @@ class Mastiff:
             
         return True
 
-    def analyze(self, fname=None,  single_plugin=None):
+    def analyze(self, fname=None, single_plugin=None):
         """Perform analysis on a given filename."""
 
         log = logging.getLogger('Mastiff.Analysis')

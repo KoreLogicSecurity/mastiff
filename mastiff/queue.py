@@ -21,7 +21,7 @@ __doc__ = """
 
 __version__ = "$Id"
 
-import os, sqlite3,  os.path
+import os, sqlite3, os.path
 import sys
 from cPickle import loads, dumps
 from time import sleep
@@ -70,7 +70,7 @@ class MastiffQueue(object):
         conf = Conf.Conf(config)
         self.path = os.path.abspath(conf.get_var('Dir', 'log_dir') + os.sep + conf.get_var('Sqlite', 'db_file'))
         log.debug('Setting up queue table at %s' % self.path)
-        
+
         # create the dir if it doesn't exist
         if not os.path.isdir(os.path.dirname(self.path)):
             try:
@@ -78,13 +78,13 @@ class MastiffQueue(object):
             except OSError, err:
                 log.error('Could not make %s: %s. Exiting.', self.path, err)
                 sys.exit(1)
-        
+
         if not os.path.exists(self.path) or not os.path.isfile(self.path):
             # does not exist, create
             try:
                 sqlite3.connect(self.path)
             except sqlite3.OperationalError, err:
-                log.error('Cannot access sqlite DB: %s.',  err)
+                log.error('Cannot access sqlite DB: %s.', err)
 
         self._connection_cache = {}
         with self._get_conn() as conn:

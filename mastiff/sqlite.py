@@ -32,12 +32,12 @@ def open_db(db_name):
 
     log = logging.getLogger('Mastiff.DB.open')
     if not os.path.exists(db_name) or not os.path.isfile(db_name):
-        log.warning('%s does not exist. Will attempt to create.',  db_name)
+        log.warning('%s does not exist. Will attempt to create.', db_name)
 
     try:
         db = sqlite3.connect(db_name)
     except sqlite3.OperationalError, err:
-        log.error('Cannot access sqlite DB: %s.',  err)
+        log.error('Cannot access sqlite DB: %s.', err)
         db  = None
         
     db.text_factory = str
@@ -51,7 +51,7 @@ def open_db_conf(config):
     """
     log = logging.getLogger('Mastiff.DB.open_db_conf')
     log_dir = config.get_var('Dir','base_dir')
-    mastiff_db = config.get_var('Sqlite',  'db_file')
+    mastiff_db = config.get_var('Sqlite', 'db_file')
 
     if mastiff_db is None or log_dir is None or len(mastiff_db) == 0:
         log.error('Unable to open DB.')
@@ -107,9 +107,9 @@ def add_table(db, table, fields):
     try:
         conn.execute(query)
         db.commit()
-    except sqlite3.OperationalError,  err:
+    except sqlite3.OperationalError, err:
         log = logging.getLogger('Mastiff.DB.add_table')
-        log.error('Could not add table %s: %s',  table,  err)
+        log.error('Could not add table %s: %s', table, err)
         return False
 
     return True
@@ -160,13 +160,13 @@ def create_mastiff_tables(db):
               'type TEXT DEFAULT NULL']
 
     # if we were not successful, return None
-    if add_table(db, 'mastiff',  fields) is None:
+    if add_table(db, 'mastiff', fields) is None:
         return False
     db.commit()
 
     return True
 
-def get_id(db,  hashes):
+def get_id(db, hashes):
     """
        Return the db id number of the given tuple of hashes.
        Returns None if tuple does not exist.
@@ -177,9 +177,9 @@ def get_id(db,  hashes):
     try:
         cur.execute('SELECT id FROM mastiff WHERE (md5=? AND \
         sha1=? AND sha256=?)',
-                    [ hashes[0],  hashes[1],  hashes[2], ])
-    except sqlite3.OperationalError,  err:
-        log.error('Could not execute query: %s',  err)
+                    [ hashes[0], hashes[1], hashes[2], ])
+    except sqlite3.OperationalError, err:
+        log.error('Could not execute query: %s', err)
         return None
 
     sqlid = cur.fetchone()
@@ -188,7 +188,7 @@ def get_id(db,  hashes):
     else:
         return sqlid[0]
 
-def insert_mastiff_item(db, hashes,  cat_list=None):
+def insert_mastiff_item(db, hashes, cat_list=None):
     """
        Insert info on analyzed file into database.
        hashes tuple  and cat_list will be inserted into mastiff table.
@@ -200,30 +200,30 @@ def insert_mastiff_item(db, hashes,  cat_list=None):
     create_mastiff_tables(db)
 
     cur = db.cursor()
-    sqlid = get_id(db,  hashes)
+    sqlid = get_id(db, hashes)
 
     if sqlid is not None:
         # already in there, just send back the id
-        log.debug('Hashes %s are already in the database.',  hashes)
+        log.debug('Hashes %s are already in the database.', hashes)
     else:
         try:
             cur.execute('INSERT INTO mastiff (md5, sha1, sha256) \
             VALUES (?, ?, ?)',
-                                    (hashes[0],  hashes[1],  hashes[2]))
+                                    (hashes[0], hashes[1], hashes[2]))
             db.commit()
-        except sqlite3.OperationalError,  err:
-            log.error('Could not insert item into mastiff: %s',  err)
+        except sqlite3.OperationalError, err:
+            log.error('Could not insert item into mastiff: %s', err)
             return None
         sqlid = cur.lastrowid
 
     if cat_list is not None and sqlid is not None:
         try:
-            log.info('Adding %s',  str(cat_list))
+            log.info('Adding %s', str(cat_list))
             cur.execute('UPDATE mastiff SET type=? WHERE id=?',
                         (str(cat_list), sqlid, ))
             db.commit()
-        except sqlite3.OperationalError,  err:
-            log.error('Could not update file type in DB: %s',  err)
+        except sqlite3.OperationalError, err:
+            log.error('Could not update file type in DB: %s', err)
 
     if sqlid is None:
         return sqlid
@@ -245,14 +245,14 @@ if __name__ == '__main__':
 
     create_mastiff_tables(mysql)
     print "*** TEST: inserting items"
-    insert_mastiff_item(mysql,  ('123', '345', '456'), 'filename')
-    insert_mastiff_item(mysql,  ('135', '790', '246'), 'filename2')
-    insert_mastiff_item(mysql,  ('111', '333', '555'), 'filename3')
-    insert_mastiff_item(mysql,  ('444', '666', '888'), 'filename4')
+    insert_mastiff_item(mysql, ('123', '345', '456'), 'filename')
+    insert_mastiff_item(mysql, ('135', '790', '246'), 'filename2')
+    insert_mastiff_item(mysql, ('111', '333', '555'), 'filename3')
+    insert_mastiff_item(mysql, ('444', '666', '888'), 'filename4')
     print "*** TEST: insert dup hashes"
-    insert_mastiff_item(mysql,  ('111', '333', '555'), 'filename5')
+    insert_mastiff_item(mysql, ('111', '333', '555'), 'filename5')
     print "*** TEST: insert dup filename"
-    insert_mastiff_item(mysql,  ('111', '333', '555'), 'filename3')
+    insert_mastiff_item(mysql, ('111', '333', '555'), 'filename3')
     print "*** TEST: add column"
     add_column(mysql, 'mastiff', 'test_col TEXT DEFAULT NULL')
     mysql.close()

@@ -57,7 +57,7 @@ class Conf:
         # read from the default file locations and the file given
         # file given will be read last and will over-write any
         # previously read-in config files
-        files_read = self.config.read([ '/etc/mastiff/mastiff.conf',
+        files_read = self.config.read(['/etc/mastiff/mastiff.conf',
                                         os.path.expanduser('~/.mastiff.conf'),
                                         config_file])
 
@@ -159,11 +159,11 @@ class Conf:
         """ Dump a copy of the config into the Mastiff log dir. """
 
         log = logging.getLogger('Mastiff.Conf.Dump')
-        out_dir = self.get_var('Dir',  'log_dir')
+        out_dir = self.get_var('Dir', 'log_dir')
 
         try:
-            with open(out_dir + os.sep + 'mastiff-run.config',  'w') as dump_file:
+            with open(out_dir + os.sep + 'mastiff-run.config', 'w') as dump_file:
                 self.config.write(dump_file)
         except ConfigParser.Error,  err:
-            log.error('Unable to dump config file: %s',  err)
+            log.error('Unable to dump config file: %s', err)
 

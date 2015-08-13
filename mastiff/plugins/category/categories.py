@@ -34,7 +34,7 @@ class MastiffPlugin(IPlugin):
     def activate(self):
         """Power rings activate! Form of Mastiff Plugin!"""
         IPlugin.activate(self)
-        
+
     def analyze(self, config, filename, output=None):
         pass
 

@@ -91,7 +91,7 @@ class EXESig(exe.EXECat):
             log.error('Cannot open openssl binary: %s' % openssl)
             return False
 
-        cmd = [openssl, 'pkcs7', '-inform',  'DER',  '-print_certs',  '-text', '-in',  der_file]        
+        cmd = [openssl, 'pkcs7', '-inform', 'DER', '-print_certs', '-text', '-in', der_file]        
 
         run = subprocess.Popen(cmd,
                                stdin=subprocess.PIPE,

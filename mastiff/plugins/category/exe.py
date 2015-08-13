@@ -65,7 +65,7 @@ class EXECat(categories.MastiffPlugin):
                 return False
 
             exe_file.seek(0x3c)
-            offset =  struct.unpack('<i', exe_file.read(4))
+            offset = struct.unpack('<i', exe_file.read(4))
             if offset[0] > 1024:
                 # seems a bit too far - we'll stop just in case
                 return False

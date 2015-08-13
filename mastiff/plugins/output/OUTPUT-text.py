@@ -67,7 +67,7 @@ def processPage(plugin, page, format):
 
         # format the header
         if mytable.printHeader is not False:
-            txtstr +=  "  ".join((getattr(val, 'name')).ljust(length) for val,  length in zip(mytable.header, col_widths)) + '\n'
+            txtstr +=  "  ".join((getattr(val, 'name')).ljust(length) for val, length in zip(mytable.header, col_widths)) + '\n'
             txtstr += '  '.join([ '-'*val for val in col_widths ]) + '\n'
 
         # format the data

@@ -131,7 +131,7 @@ class GenStrings(gen.GenericCat):
 
         if len(self.strings) == 0:
             log.warn("No embedded strings detected.")
-            str_table.addheader([('Message', str)],  printHeader=False)
+            str_table.addheader([('Message', str)], printHeader=False)
             str_table.addrow(['No embedded strings detected.' ])
             return True
 
