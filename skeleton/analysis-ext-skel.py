@@ -45,6 +45,7 @@ class GenSkelExt(gen.GenericCat):
     def __init__(self):
         """Initialize the plugin."""
         gen.GenericCat.__init__(self)
+        self.page_data.meta['filename'] = 'CHANGEME'
 
     def analyze(self, config, filename):
         """
@@ -84,22 +85,25 @@ class GenSkelExt(gen.GenericCat):
             log.error('Error running program: %s' % error)
             return False
 
-        self.output_file(config.get_var('Dir','log_dir'), output)
+        self.gen_output(output)
         log.debug ('Successfully ran %s.', self.name)
 
         return True
 
-    def output_file(self, outdir, data):
-        """Place the data into a file."""
+    def gen_output(self, output):
+        """Place the results into a Mastiff Output Page."""
         log = logging.getLogger('Mastiff.Plugins.' + self.name)
 
-        try:
-            out_file = open(outdir + os.sep + "analysis-skel-ext-output.txt",'w')
-        except IOError, err:
-            log.error('Write error: %s', err)
-            return False
+        # self.page_data was previously initialized
+        # add a table to it
+        new_table = self.page_data.addTable('ANALYSIS PLUGIN DESCRIPTION')
 
-        out_file.write(data)
-        out_file.close()
+        # parse through data generated from output here
+        
+        # add header to table
+        # example: new_table.addHeader([('Header 1', str), ('Header 2', int)])
+        
+        # add rows of data to table
+        # example: new_table.addRow(['row1', 1])
+
         return True
-

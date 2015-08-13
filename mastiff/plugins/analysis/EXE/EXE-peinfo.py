@@ -132,9 +132,13 @@ class PEInfo(exe.EXECat):
                                 outfile.write("{0:20}:\t{1:40}\n".format(printable_str(entry[0]), \
                                                             printable_str(entry[1])))
                     if fileinfo.Key == 'VarFileInfo':
-                        for var in fileinfo.Var:
-                            outfile.write("{0:20}:\t{1:40}\n".format(printable_str(var.entry.items()[0][0]),
-                                                                     printable_str(var.entry.items()[0][1])))
+                        try:
+                            for var in fileinfo.Var:
+                                outfile.write("{0:20}:\t{1:40}\n".format(printable_str(var.entry.items()[0][0]),
+                                                                         printable_str(var.entry.items()[0][1])))
+                        except:
+                            # there are times when a VarFileInfo structure may be present, but empty
+                            pass
             else:
                 outfile.write('No file information present.\n')
 

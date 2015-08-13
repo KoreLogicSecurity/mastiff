@@ -95,7 +95,7 @@ def main():
                       "-l",
                       action = "store",
                       dest = "list_plugins",
-                      help = "List all available plug-ins of the specified type and exit. Type must be one of 'analysis' or 'cat'.",
+                      help = "List all available plug-ins of the specified type and exit. Type must be one of 'analysis', 'cat', or 'output'.",
                       metavar = "PLUGIN_TYPE")
     parser.add_option(
                       "--option",

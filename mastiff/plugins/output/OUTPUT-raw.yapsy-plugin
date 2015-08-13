@@ -1,0 +1,10 @@
+[Core]
+Name = Raw Output
+Module = OUTPUT-raw
+
+[Documentation]
+Description = Dumps output in its raw structure format.
+Author = Tyler Hudak
+Version = 1.0
+Website = www.korelogic.com
+License = Apache License, Version 2.0

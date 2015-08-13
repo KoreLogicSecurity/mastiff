@@ -31,8 +31,8 @@ deactivate(): OPTIONAL: Deactivated code called by Yapsy.
 analyze(config, filename): MANDATORY: The main body of code that performs the
                            analysis on the file.
 
-output_file(outdir, data): MANDATORY: Function that puts the data received into
-                           a given directory.
+gen_output(outdir): Function that puts the data into self.page_data for the output
+                             plug-ins.
 """
 
 __version__ = "$Id$"
@@ -50,6 +50,7 @@ class GenSkeleton(gen.GenericCat):
     def __init__(self):
         """Initialize the plugin."""
         gen.GenericCat.__init__(self)
+        self.page_data.meta['filename'] = 'CHANGEME'
 
     def activate(self):
         """Activate the plugin."""
@@ -68,16 +69,25 @@ class GenSkeleton(gen.GenericCat):
         log = logging.getLogger('Mastiff.Plugins.' + self.name)
         log.info('Starting execution.')
 
-        # Add analysis code here. data var below would be changed.
+        # Add analysis code here. Data can be added to tables or passed into gen_output
 
-        data = "\"Generic Plugin Example Skeleton data from %s\"" % filename
-        self.output_file(config.get_var('Dir','log_dir'), data)
-        return True
+        self.gen_output()
+        
+        return self.page_data
 
-    def output_file(self, outdir, data):
-        """Print output from analysis to a file."""
+    def gen_output(self):
+        """Place the results into a Mastiff Output Page."""
+        log = logging.getLogger('Mastiff.Plugins.' + self.name)
 
-        # Code to log to file goes here
+        # self.page_data was previously initialized
+        # add a table to it
+        new_table = self.page_data.addTable('ANALYSIS PLUGIN DESCRIPTION')
+
+        # add header to table
+        # example: new_table.addHeader([('Header 1', str), ('Header 2', int)])
+        
+        # add rows of data to table
+        # example: new_table.addRow(['row1', 1])
 
         return True
 

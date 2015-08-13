@@ -17,6 +17,7 @@ mastiff.
 __version__ = "$Id$"
 
 from yapsy.IPlugin import IPlugin
+import mastiff.plugins.output as output
 
 class MastiffPlugin(IPlugin):
     """The base plugin class every category class should inherit."""
@@ -27,10 +28,15 @@ class MastiffPlugin(IPlugin):
         self.name = name
         self.prereq = None
         self.yara_filetype = None
+        self.page_data = output.page()
+        self.page_data.meta['filename'] = 'CHANGEME'
 
     def activate(self):
         """Power rings activate! Form of Mastiff Plugin!"""
         IPlugin.activate(self)
+        
+    def analyze(self, config, filename, output=None):
+        pass
 
     def deactivate(self):
         """Deactivate plugin."""

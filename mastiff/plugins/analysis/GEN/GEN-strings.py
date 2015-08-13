@@ -51,6 +51,8 @@ class GenStrings(gen.GenericCat):
         """Initialize the plugin."""
         gen.GenericCat.__init__(self)
         self.strings = {}
+        self.page_data.meta['filename'] = 'strings'
+        self.prereq = 'File Information'
 
     def _insert_strings(self, output, str_type):
         """Insert output from strings command into self.strings list."""
@@ -113,31 +115,29 @@ class GenStrings(gen.GenericCat):
 
         self._insert_strings(output,'U')
 
-        self.output_file(config.get_var('Dir','log_dir'))
+        #self.gen_output(config.get_var('Dir','log_dir'))
+        self.gen_output()
         log.debug ('Successfully grabbed strings.')
 
-        return self.strings
+        return self.page_data
 
-    def output_file(self, outdir):
-        """Place the extracted strings into a file."""
+    def gen_output(self):
+        """Place the results into a Mastiff Output Page."""
         log = logging.getLogger('Mastiff.Plugins.' + self.name)
 
-        try:
-            str_file = open(outdir + os.sep + "strings.txt",'w')
-        except IOError, err:
-            log.error('Write error: %s', err)
-            return False
+        # self.page_data was previously initialized
+        # add a table to it
+        str_table = self.page_data.addTable('Embedded Strings')
 
         if len(self.strings) == 0:
             log.warn("No embedded strings detected.")
-            str_file.write("No embedded strings detected.")
+            str_table.addheader([('Message', str)],  printHeader=False)
+            str_table.addrow(['No embedded strings detected.' ])
+            return True
 
+        str_table.addheader([('Offset', str), ('Type', str), ('String', str)])
         for k in sorted(self.strings.iterkeys()):
-            str_file.write("%x %s %s\n" % (k,
-                                           self.strings[k][0],
-                                           self.strings[k][1]))
+            str_table.addrow([ '{:0x}'.format(k), self.strings[k][0], self.strings[k][1] ])
 
-
-        str_file.close()
         return True
 

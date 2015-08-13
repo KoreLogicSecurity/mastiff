@@ -1,0 +1,9 @@
+[Core]
+Name = Generic Output Skeleton Plugin
+Module = OUTPUT-skel
+
+[Documentation]
+Description = Your Description Here
+Author = Your Name Here
+Version = 0.1
+Website = Your Website Here

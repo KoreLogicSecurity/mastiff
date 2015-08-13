@@ -55,6 +55,7 @@ class EXE_Resources(exe.EXECat):
         exe.EXECat.__init__(self)
         self.resources = list()
         self.pe = None
+        self.output = dict()
 
     def analyze_dir(self, directory, prefix='', _type='', timedate=0):
         """ Analyze a resource directory and obtain all of its items."""
@@ -174,14 +175,32 @@ class EXE_Resources(exe.EXECat):
 
         # parse the directory structure
         self.analyze_dir(self.pe.DIRECTORY_ENTRY_RESOURCE)
+        
+        self.output['metadata'] = {  }
+        self.output['data'] = dict()
 
         if len(self.resources) == 0:
-            log.info('No resources could be found.')
+            log.info('No resources could be found.')            
         else:
             # output data to file and extract resources
+            self.gen_output(config.get_var('Dir','log_dir'))
             self.output_file(config.get_var('Dir','log_dir'))
             self.extract_resources(config.get_var('Dir','log_dir'), filename)
 
+        return self.output
+        
+    def gen_output(self, outdir):
+        """ Generate the output to send back. """
+        
+        self.output['data']['resources'] = list()
+        self.output['data']['resources'].append([ 'Name/ID', 'Type', 'File Offset', 'Size', 'Language', 'Time Date Stamp'])
+        
+        for item in sorted(self.resources, key=lambda mydict: mydict['Offset']):
+
+            lang = ', '.join(item['Lang']).replace('SUBLANG_', '').replace('LANG_', '')
+            my_time = time.asctime(time.gmtime(item['TimeDate']))
+            self.output['data']['resources'].append([ item['Id'], item['Type'], hex(item['Offset']), hex(item['Size']), lang, my_time ])
+            
         return True
 
     def output_file(self, outdir):
