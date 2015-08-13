@@ -39,7 +39,6 @@ import subprocess
 import logging
 import os
 
-from mastiff.plugins import printable_str
 import mastiff.plugins.category.pdf as pdf
 
 class PDFMetadata(pdf.PDFCat):
@@ -48,6 +47,7 @@ class PDFMetadata(pdf.PDFCat):
     def __init__(self):
         """Initialize the plugin."""
         pdf.PDFCat.__init__(self)
+        self.page_data.meta['filename'] = 'metadata'
 
     def analyze(self, config, filename):
         """
@@ -82,7 +82,7 @@ class PDFMetadata(pdf.PDFCat):
                                close_fds=True)
         (output, error) = run.communicate()
         if error is not None and len(error) > 0:
-            log.error('Error running program: %s' % error)
+            log.error('Error running program: {}'.format(error))
             return False
 
         metadata = dict()
@@ -92,31 +92,24 @@ class PDFMetadata(pdf.PDFCat):
                      'Creator Tool', 'Document ID', 'Instance ID', 'Warning']
 
         # grab only data we are interested in
-
         for line in output.split('\n'):
             if line.split(' :')[0].rstrip() in keywords:
-                metadata[line.split(':')[0].rstrip()] = \
-                line.split(' :')[1].rstrip()
+                metadata[line.split(':')[0].rstrip()] = line.split(' :')[1].rstrip()
 
+        new_table = self.page_data.addTable(title='PDF Document Metadata')
 
-        self.output_file(config.get_var('Dir','log_dir'), metadata)
+        if len(metadata) == 0:
+            # no data
+            log.warn("No PDF metadata detected.")
+            new_table.addheader([('Message', str)], printHeader=False)
+            new_table.addrow(['No PDF metadata detected.' ])
+        else:
+            # set up output table
+            new_table.addheader([('Data', str), ('Value', str)])
+            # sort and add to table
+            for key in sorted(metadata.iterkeys()):
+                new_table.addrow([key, metadata[key]])
+
         log.debug ('Successfully ran %s.', self.name)
 
-        return True
-
-    def output_file(self, outdir, data):
-        """Place the data into a file."""
-        log = logging.getLogger('Mastiff.Plugins.' + self.name)
-
-        try:
-            out_file = open(outdir + os.sep + "metadata.txt",'w')
-            out_file.write('PDF Metadata\n\n')
-            for key in data.keys():
-                out_file.write('{0:25}\t{1}\n'.format(key, printable_str(data[key])) )
-        except IOError, err:
-            log.error('Write error: %s', err)
-            return False
-
-        out_file.close()
-        return True
-
+        return self.page_data
