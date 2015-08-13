@@ -43,7 +43,7 @@ class OfficeMetadata(office.OfficeCat):
     def __init__(self):
         """Initialize the plugin."""
         office.OfficeCat.__init__(self)
-        self.page_data.meta['filename'] = 'metadata'
+        self.page_data.meta['filename'] = 'office-metadata'
 
     def analyze(self, config, filename):
         """

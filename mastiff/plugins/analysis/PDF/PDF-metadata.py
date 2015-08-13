@@ -47,7 +47,7 @@ class PDFMetadata(pdf.PDFCat):
     def __init__(self):
         """Initialize the plugin."""
         pdf.PDFCat.__init__(self)
-        self.page_data.meta['filename'] = 'metadata'
+        self.page_data.meta['filename'] = 'pdf-metadata'
 
     def analyze(self, config, filename):
         """
