@@ -14,6 +14,9 @@ BASEROW = collections.namedtuple('BASEROW', 'ROWINDEX')
 #             Maybe have our own class?
 DATATYPES = [int, str, float, unicode, time.struct_time]
 
+# characters that spaces should be replaced with
+SPACE='___'
+
 class TableError(Exception):
     """ Table Exception class """
     pass
@@ -46,6 +49,7 @@ class table(object):
         self.INDEX = 0
         self.header = None
         self.printHeader = True
+        self.printVertical = False
         self.rowdef = None
         self.addheader(header)
         self.title = title
@@ -87,7 +91,7 @@ class table(object):
         else:
             self.title = ''
 
-    def addheader(self, header=None, printHeader=True):
+    def addheader(self, header=None, printHeader=True, printVertical=False):
         """ Add a header to the table.
             The header defines the format of the table and should be a list
             composed of the names of the fields in the table, and their type
@@ -113,6 +117,8 @@ class table(object):
 
             if printHeader is False:
                 self.printHeader = False
+            if printVertical is True:
+                self.printVertical = True
 
             # if we have a rowdef, create the row def tuple
             if len(rowdef) > 0:

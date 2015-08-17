@@ -21,6 +21,7 @@ import logging
 import mastiff.plugins.output as masOutput
 
 def renderText(format, logdir, filename, datastring):
+    """ Places the datastring previously created into the appropriate file or files. """
 
     log = logging.getLogger('Mastiff.Plugins.Output.OUTPUTtext.renderText')
     # print out the formatted text for the plug-in
@@ -44,12 +45,14 @@ def renderText(format, logdir, filename, datastring):
     except IOError, err:
         log.error('Could not open {} file for writing: {}'.format(out_filename, err))
         return False
-
-    txt_file.write(datastring)
+        
+    txt_file.write(datastring.encode('utf-8', 'replace'))
     txt_file.close()
 
 def processPage(plugin, page, format):
-    txtstr = ''
+    """ Processes a page of data and puts it into the correct format. """
+    
+    txtstr = unicode('', 'utf-8')
     if format == 'single':
         txtstr += '\n{} Plug-in Results\n\n'.format(plugin)
 
@@ -58,24 +61,67 @@ def processPage(plugin, page, format):
         (title, mytable, index) = tabledata
 
         # first we need to go through the table and find the max length for each column
-        col_widths = [ len(getattr(col_name, 'name')) for col_name in mytable.header ]
+        col_widths = [ len(getattr(col_name, 'name').replace(masOutput.SPACE, ' ')) for col_name in mytable.header ]
 
-        for row in mytable:
-            # set a maximum length of each column to 60 characters
-            col_widths = map(max, zip(col_widths, [ min(60, len(str(col))) for col in row[1:]]))
-            #print col_widths
+        # check to see if it should be printed like a horizontal or vertical table    
+        if mytable.printVertical is False:
 
-        # format the header
-        if mytable.printHeader is not False:
-            txtstr +=  "  ".join((getattr(val, 'name')).ljust(length) for val, length in zip(mytable.header, col_widths)) + '\n'
-            txtstr += '  '.join([ '-'*val for val in col_widths ]) + '\n'
+            for row in mytable:
+               
+                # modify the col_widths to set a maximum length of each column to 60 characters
+                row_lens = list()
 
-        # format the data
-        for row in mytable:
-            txtstr += "  ".join(str(val).ljust(length) for val, length in zip(row[1:], col_widths) ) + '\n'
+                for col in row[1:]:
+                    try:
+                        row_lens.append(min(60, len(col)))
+                    except TypeError, err:
+                        # if this isn't a str or unicode value, explicitly convert it
+                        row_lens.append(min(60, len(str(col))))                
+                        
+                col_widths = map(max, zip(col_widths, row_lens))                
+            
+            # format the header
+            if mytable.printHeader is not False:
+                txtstr +=  "  ".join((getattr(val, 'name')).replace(masOutput.SPACE, ' ').ljust(length) for val, length in zip(mytable.header, col_widths)) + '\n'
+                txtstr += '  '.join([ '-'*val for val in col_widths ]) + '\n'
+        
+            # format the data
+            for row in mytable:                                
+                for val, length in zip(row[1:], col_widths):
+                    try:                        
+                        txtstr += val.ljust(length) + "  "
+                    except UnicodeDecodeError, err:
+                        txtstr += val.decode('utf-8').ljust(length) + "  "
+                    except AttributeError, err:
+                        # if this isn't a str or unicode value, explicitly convert it
+                        txtstr += str(val).ljust(length) + "  "
 
-        txtstr += '\n'
+                txtstr += '\n'
+            txtstr += '\n'
+        
+        else:
+            # print it as a vertical table
+            
+            # get max column width + 2
+            max_col = max(col_widths) + 2
+            
+            # go through each row of data
+            for row in mytable:
+                
+                # go through each item in the row
+                for data in zip(mytable.header, row[1:]):
+                    if mytable.printHeader is not False:                        
+                        txtstr += getattr(data[0], 'name').replace(masOutput.SPACE, ' ').ljust(max_col)
+                    
+                    try:
+                        txtstr += data[1]
+                    except TypeError:
+                        txtstr += str(data[1])
+                        
+                    txtstr += '\n'
 
+                txtstr += '\n'
+                
     return txtstr
 
 class OUTPUTtext(masOutput.MastiffOutputPlugin):
@@ -101,13 +147,13 @@ class OUTPUTtext(masOutput.MastiffOutputPlugin):
 
         log.info('Writing text output.')
 
-        txtstr = ''
+        txtstr = unicode('', 'utf-8')
         format = config.get_var(self.name, 'format')
 
         # we need to output the File Information plugin first as it contains the
         # summary information on the analyzed file
         try:
-            log.debug('Writing file information.')
+            log.debug('Writing file information.')            
             txtstr += processPage('File Information', data[data.keys()[0]]['Generic']['File Information'], format)
             renderText(format, config.get_var('Dir', 'log_dir'), data[data.keys()[0]]['Generic']['File Information'].meta['filename'], txtstr)
             txtstr = ''
