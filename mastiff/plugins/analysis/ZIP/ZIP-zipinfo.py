@@ -39,7 +39,7 @@ import struct
 
 import mastiff.plugins.category.zip as zip
 
-class ZipInfo_u(zip.ZipCat):
+class ZIP_Info(zip.ZipCat):
     """Class to extract zip metadata and place it into a file."""
 
     def __init__(self):
@@ -69,45 +69,33 @@ class ZipInfo_u(zip.ZipCat):
             my_zip = zipfile.ZipFile(filename, 'r')
             info_list = my_zip.infolist()
         except (zipfile.BadZipfile, IOError, struct.error), err:
-            log.error('Unable to open or process zip file: %s' \
-                      % err)
+            log.error('Unable to open or process zip file: {}'.format(err))
             return False
 
         info_table = self.page_data.addTable(title='Zip Archive Information')
         info_table.addheader([('Data', str), ('Value', str)], printHeader=False)
-        
-        out_str = unicode()
-                
-        out_str = "File Name: {}\n".format(os.path.basename(filename))
-        info_table.addrow(['File Name', os.path.basename(filename) ])        
-        
+
+        info_table.addrow(['File Name', os.path.basename(filename) ])
+
         if my_zip.comment is None or len(my_zip.comment) == 0:
-            out_str += "This file has no comment.\n\n"
             info_table.addrow(['Comment', 'This file has no comment.'])
         else:
             # ignore any unprintable unicode characters
-            out_str += unicode("Comment: %s\n\n" % (my_zip.comment),  errors='ignore')
             info_table.addrow(['Comment', unicode("%s" % (my_zip.comment),  errors='ignore')])
-            
+
         if len(my_zip.filelist) > 0:
-            out_str += self.quick_info(info_list) + '\n'
-            out_str += self.full_info(info_list)
+            self.quick_info(info_list)
+            self.full_info(info_list)
         else:
             info_table.addrow(['Warning', 'Zip archive has no files.'])
-        
+
         my_zip.close()
 
-        #self.output_file(config.get_var('Dir','log_dir'), out_str)
         return self.page_data
 
     def quick_info(self, info_list):
         """ Obtain quick directory listing of the archive with some information."""
-        """output = '{0:19} {1:10} {2:35}\n'.format('Modification Date', \
-                                                 'File Size', 'File Name',)
-        output += '-'*80 + '\n'
-        """
 
-        
         quick_table = self.page_data.addTable('Quick Info')
         quick_table.addheader([('Modification___Date', str), ('File___Size', int), ('File___Name', str)])
 
@@ -118,22 +106,16 @@ class ZipInfo_u(zip.ZipCat):
 
             # if file is encrypted, flag it
             try:
-                filename = unicode(file_info.filename)            
+                filename = unicode(file_info.filename)
             except UnicodeDecodeError, err:
                 filename = unicode(file_info.filename, 'utf-8', 'replace')
-                
+
             if file_info.flag_bits & 0x1 == 0x1:
                 filename = '* ' + filename
-                
-            quick_table.addrow([date_str, file_info.file_size, filename]) 
 
-            """output += u'{0:19} {1:<10} {2:35}\n'.format(date_str, \
-                                                       file_info.file_size, \
-                                                       filename)
-            """
-        
-        #return output
-        return ''
+            quick_table.addrow([date_str, file_info.file_size, filename])
+
+        return
 
     def _version_created(self, version):
         """ Return a string containing the system that created the archive.
@@ -243,31 +225,31 @@ class ZipInfo_u(zip.ZipCat):
         """ Obtain a full set of information for each file within the archive. """
 
         log = logging.getLogger('Mastiff.Plugins.' + self.name + '.fileinfo')
-                
+
         full_table = self.page_data.addTable('Zip Archive File Info')
 
         try:
             for file_info in info_list:
                 my_headers = list()
                 my_output = list()
-        
+
                 my_headers.append(('File___Name', str))
                 try:
                     my_output.append(unicode(file_info.filename))
                 except UnicodeDecodeError, err:
                     my_output.append(unicode(file_info.filename, errors='replace' ))
-                
+
 
                 date_str = "%02d/%02d/%d %02d:%02d:%02d" % \
                 (file_info.date_time[1], file_info.date_time[2], file_info.date_time[0], \
-                file_info.date_time[3], file_info.date_time[4], file_info.date_time[5])                
+                file_info.date_time[3], file_info.date_time[4], file_info.date_time[5])
 
                 my_headers.append(('Last___Modification___Date', str))
                 my_output.append(date_str)
-                
-                (file_info.compress_type, self._compression_method(file_info.compress_type))
+
+                #(file_info.compress_type, self._compression_method(file_info.compress_type))
                 my_headers.append(('Compression___Type', str))
-                my_output.append("%d - %s" % (file_info.compress_type, self._compression_method(file_info.compress_type)))                
+                my_output.append("%d - %s" % (file_info.compress_type, self._compression_method(file_info.compress_type)))
 
                 my_headers.append(('File___Comment', str))
                 if file_info.comment is None or len(file_info.comment) == 0:
@@ -275,60 +257,60 @@ class ZipInfo_u(zip.ZipCat):
                 else:
                     my_output.append(u"%s\n" % file_info.comment)
 
-                (self._version_created(file_info.create_system), file_info.create_system)
+                #(self._version_created(file_info.create_system), file_info.create_system)
                 my_headers.append(('Creation___System', str))
                 my_output.append("%s (%d)" % (self._version_created(file_info.create_system), file_info.create_system))
 
                 my_headers.append(('PKZIP___creation___version', str))
                 my_output.append(file_info.create_version)
-                
+
                 my_headers.append(('Version___to___extract', str))
                 my_output.append(file_info.extract_version)
-                
+
                 my_headers.append(('Flag___bits', str))
                 my_output.append("0x%x\n%s" % (file_info.flag_bits, self._flag_bits(file_info.flag_bits, file_info.compress_type).rstrip('\n')))
-                
+
                 my_headers.append(('Volume___number', str))
                 my_output.append(file_info.volume)
-                
+
                 my_headers.append(('Internal___attributes', str))
                 my_tmpstr = self._internal_attribs(file_info.internal_attr)
                 if len(my_tmpstr) > 0:
                     my_output.append("0x%x\n%s" % (file_info.internal_attr, my_tmpstr))
                 else:
                     my_output.append("0x%x" % (file_info.internal_attr))
-                
+
                 my_headers.append(('External___attributes', str))
                 my_output.append("0x%x" % file_info.external_attr)
-                
+
                 my_headers.append(('CRC32', str))
                 my_output.append(file_info.CRC)
-                
+
                 my_headers.append(('Header___offset', str))
                 my_output.append(file_info.header_offset)
-                
+
                 my_headers.append(('Compressed___size', str))
                 my_output.append(file_info.compress_size)
-                
+
                 my_headers.append(('Uncompress___size', str))
                 my_output.append(file_info.file_size)
-                
+
                 my_headers.append(('Extra___Data', str))
-                
+
                 if file_info.extra is not None:
                     my_output.append('This file entry contains extra data. Not supported yet.')
                 else:
-                    my_output.append('No extra data.')                    
-                
-                # add the header if necessary                
+                    my_output.append('No extra data.')
+
+                # add the header if necessary
                 if full_table.header is None:
                     full_table.addheader(my_headers, printVertical=True)
                 full_table.addrow(my_output)
 
         except ImportError:
-            log.error('Error obtaining file information from archive for %s.' % file_info.filename.encode('utf-8','backslashreplace'))
+            log.error('Error obtaining file information from archive for {}.'.format(file_info.filename.encode('utf-8','backslashreplace')))
 
-        return 'foo'
+        return
 
     def output_file(self, outdir, data):
         """Print output from analysis to a file."""
@@ -340,7 +322,7 @@ class ZipInfo_u(zip.ZipCat):
             outfile.write(data)
             outfile.close()
         except IOError, err:
-            log.error('Could not open zipinfo.txt: %s' % err)
+            log.error('Could not open zipinfo.txt: {}'.format(err))
             return False
 
         return True

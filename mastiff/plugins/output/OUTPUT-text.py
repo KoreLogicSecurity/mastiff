@@ -20,18 +20,18 @@ __version__ = "$Id$"
 import logging
 import mastiff.plugins.output as masOutput
 
-def renderText(format, logdir, filename, datastring):
+def renderText(page_format, logdir, filename, datastring):
     """ Places the datastring previously created into the appropriate file or files. """
 
     log = logging.getLogger('Mastiff.Plugins.Output.OUTPUTtext.renderText')
     # print out the formatted text for the plug-in
-    if format == 'single':
+    if page_format == 'single':
         # all data is on one page, open up one file for it
         out_filename = logdir + '/output_txt.txt'
         mode = 'a'
         # add a separater between plug-in output
         datastring += '*'*80 + '\n'
-    elif format == 'multiple':
+    elif page_format == 'multiple':
         # data should be broken up into individual files.
         # this will be set for each file
         out_filename = logdir + '/' + filename + '.txt'
@@ -45,15 +45,32 @@ def renderText(format, logdir, filename, datastring):
     except IOError, err:
         log.error('Could not open {} file for writing: {}'.format(out_filename, err))
         return False
-        
+
     txt_file.write(datastring.encode('utf-8', 'replace'))
     txt_file.close()
 
-def processPage(plugin, page, format):
+def _extend(data, length=0):
+    """ Returns a string that is left justified by the length given. """
+    if data is None:
+        return u""
+
+    try:
+        outstr = data.ljust(length)
+    except AttributeError:
+        outstr = str(data).ljust(length)
+    except UnicodeEncodeError:
+        outstr = data.decode('utf-8').ljust(length)
+
+    if isinstance(outstr, unicode):
+        return outstr
+    else:
+        return unicode(outstr, 'utf-8')
+
+def processPage(plugin, page, page_format):
     """ Processes a page of data and puts it into the correct format. """
-    
+
     txtstr = unicode('', 'utf-8')
-    if format == 'single':
+    if page_format == 'single':
         txtstr += '\n{} Plug-in Results\n\n'.format(plugin)
 
     # loop through each table in the page
@@ -63,65 +80,60 @@ def processPage(plugin, page, format):
         # first we need to go through the table and find the max length for each column
         col_widths = [ len(getattr(col_name, 'name').replace(masOutput.SPACE, ' ')) for col_name in mytable.header ]
 
-        # check to see if it should be printed like a horizontal or vertical table    
+        # check to see if it should be printed like a horizontal or vertical table
         if mytable.printVertical is False:
+            outlist = list()
 
             for row in mytable:
-               
                 # modify the col_widths to set a maximum length of each column to 60 characters
                 row_lens = list()
 
                 for col in row[1:]:
                     try:
                         row_lens.append(min(60, len(col)))
-                    except TypeError, err:
+                    except TypeError:
                         # if this isn't a str or unicode value, explicitly convert it
-                        row_lens.append(min(60, len(str(col))))                
-                        
-                col_widths = map(max, zip(col_widths, row_lens))                
-            
+                        row_lens.append(min(60, len(str(col))))
+
+                col_widths = map(max, zip(col_widths, row_lens))
+
             # format the header
             if mytable.printHeader is not False:
                 txtstr +=  "  ".join((getattr(val, 'name')).replace(masOutput.SPACE, ' ').ljust(length) for val, length in zip(mytable.header, col_widths)) + '\n'
-                txtstr += '  '.join([ '-'*val for val in col_widths ]) + '\n'
-        
-            # format the data
-            for row in mytable:                                
-                for val, length in zip(row[1:], col_widths):
-                    try:                        
-                        txtstr += val.ljust(length) + "  "
-                    except UnicodeDecodeError, err:
-                        txtstr += val.decode('utf-8').ljust(length) + "  "
-                    except AttributeError, err:
-                        # if this isn't a str or unicode value, explicitly convert it
-                        txtstr += str(val).ljust(length) + "  "
+                txtstr += '  '.join([ '-'*val for val in col_widths ])
 
-                txtstr += '\n'
+            # format the data
+            for row in mytable:
+                # combine the row values together and extend them as needed
+                # this may be a confusing statement, but its fast!
+                #outlist.append("".join(map(lambda x: _extend(x[0], x[1]+2), zip(row[1:], col_widths))))
+                outlist.append("".join([_extend(x[0], x[1]+2) for x in zip(row[1:], col_widths) ]))
+
             txtstr += '\n'
-        
+            txtstr += "\n".join(outlist)
+            txtstr += '\n\n'
+
         else:
-            # print it as a vertical table
-            
+            outlist = list()
+
             # get max column width + 2
             max_col = max(col_widths) + 2
-            
-            # go through each row of data
-            for row in mytable:
-                
-                # go through each item in the row
-                for data in zip(mytable.header, row[1:]):
-                    if mytable.printHeader is not False:                        
-                        txtstr += getattr(data[0], 'name').replace(masOutput.SPACE, ' ').ljust(max_col)
-                    
-                    try:
-                        txtstr += data[1]
-                    except TypeError:
-                        txtstr += str(data[1])
-                        
-                    txtstr += '\n'
 
-                txtstr += '\n'
-                
+            # pre-justify header
+            newheader = [ getattr(data,'name').replace(masOutput.SPACE, ' ').ljust(max_col) for data in mytable.header ]
+
+            # this adds a slight speed increase for large output
+            myappend = outlist.append
+
+            # go through each row of data and join the header and values together
+            for row in mytable:
+                #myappend("\n".join(map(lambda x: x[0] + _extend(x[1], 0), zip(newheader, row[1:]))))
+                myappend("\n".join([ x[0] + _extend(x[1], 0) for x in zip(newheader, row[1:])]))
+                myappend("\n\n")
+
+            txtstr += "".join(outlist)
+            txtstr += '\n'
+
     return txtstr
 
 class OUTPUTtext(masOutput.MastiffOutputPlugin):
@@ -148,22 +160,22 @@ class OUTPUTtext(masOutput.MastiffOutputPlugin):
         log.info('Writing text output.')
 
         txtstr = unicode('', 'utf-8')
-        format = config.get_var(self.name, 'format')
+        page_format = config.get_var(self.name, 'format')
 
         # we need to output the File Information plugin first as it contains the
         # summary information on the analyzed file
         try:
-            log.debug('Writing file information.')            
-            txtstr += processPage('File Information', data[data.keys()[0]]['Generic']['File Information'], format)
-            renderText(format, config.get_var('Dir', 'log_dir'), data[data.keys()[0]]['Generic']['File Information'].meta['filename'], txtstr)
-            txtstr = ''
-        except KeyError, err:
+            log.debug('Writing file information.')
+            txtstr += processPage('File Information', data[data.keys()[0]]['Generic']['File Information'], page_format)
+            renderText(page_format, config.get_var('Dir', 'log_dir'), data[data.keys()[0]]['Generic']['File Information'].meta['filename'], txtstr)
+            txtstr = unicode('', 'utf-8')
+        except KeyError:
             log.error('File Information plug-in data missing. Aborting.')
             return False
 
         # loop through category data
         for cats, catdata in data[data.keys()[0]].iteritems():
-            if format == 'single':
+            if page_format == 'single':
                 catstr = '{} Category Analysis Results'.format(cats)
                 log.debug('Writing {} results.'.format(cats))
                 txtstr += '{}\n'.format(catstr) + '-'*len(catstr) + '\n'
@@ -174,10 +186,10 @@ class OUTPUTtext(masOutput.MastiffOutputPlugin):
                     continue
 
                 # process the page into its output string
-                txtstr += processPage(plugin, pages, format)
+                txtstr += processPage(plugin, pages, page_format)
 
                 # render the text into the appropriate location
-                renderText(format, config.get_var('Dir', 'log_dir'), pages.meta['filename'], txtstr)
+                renderText(page_format, config.get_var('Dir', 'log_dir'), pages.meta['filename'], txtstr)
                 txtstr = ''
 
         return True
