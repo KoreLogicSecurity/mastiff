@@ -95,7 +95,7 @@ class ZIP_Extract(zip.ZipCat):
             log.info('Password \"{}\" will be used for this zip.'.format(pwd))
 
         # cycle through files and extract them
-        for file_member in my_zip.namelist():
+        for file_member in my_zip.namelist():            
 
             # if its an absolute directory, remove os.sep
             if file_member[0:1] == os.sep:
@@ -114,16 +114,19 @@ class ZIP_Extract(zip.ZipCat):
             # we can't just blindly extract in case there are absolute paths or '..'s
             # so we read in the file, create any directories, and write it out
             try:
-                log.debug('Creating directory {}.'.format(os.path.dirname(zipfile_name.encode('utf-8'))))
+                log.debug(u'Creating directory {}.'.format(os.path.dirname(zipfile_name)))
                 os.makedirs(log_dir + os.sep + os.path.dirname(zipfile_name))
             except OSError, err:
-                log.debug('Directory {} already exists.'.format(os.path.dirname(zipfile_name.encode('utf-8'))))
+                log.debug(u'Directory {} already exists.'.format(os.path.dirname(zipfile_name)))
 
             if len(os.path.basename(file_member)) == 0:
-                log.debug('{} is just a directory. Not creating file.'.format(file_member.encode('utf-8')))
-                continue
+                try:
+                    log.debug('{} is just a directory. Not creating file.'.format(file_member))
+                except UnicodeEncodeError:
+                    log.debug('{} is just a directory. Not creating file.'.format(file_member.encode('utf-8')))
+                continue                
 
-            log.info('Extracting {}.'.format(zipfile_name.encode('utf-8')))
+            log.info(u'Extracting {}.'.format(zipfile_name))
 
             try:
                 in_file = my_zip.open(file_member, 'r', pwd=pwd)
