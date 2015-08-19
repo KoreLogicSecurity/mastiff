@@ -48,8 +48,11 @@ class SkelCat(categories.MastiffPlugin):
         """Determine if the magic string is appropriate for this category"""
 
         # check magic string first
-        if [ type_ for type_ in self.my_types if type_ in id_dict['magic']]:
-            return self.cat_name
+        try:
+            if [ type_ for type_ in self.my_types if type_ in id_dict['magic']]:
+                return self.cat_name
+        except:
+            return None
         
         # run Yara type check
         if FileType.yara_typecheck(file_name, self.yara_filetype) is True:
