@@ -50,7 +50,7 @@ def renderText(page_format, logdir, filename, datastring):
     txt_file.close()
 
 def _extend(data, length=0):
-    """ Returns a string that is left justified by the length given. """
+    """ Returns a unicode string that is left justified by the length given. """
     if data is None:
         return u""
 
@@ -58,13 +58,13 @@ def _extend(data, length=0):
         outstr = data.ljust(length)
     except AttributeError:
         outstr = str(data).ljust(length)
-    except UnicodeEncodeError:
+    except UnicodeEncodeError:        
         outstr = data.decode('utf-8').ljust(length)
 
     if isinstance(outstr, unicode):
         return outstr
     else:
-        return unicode(outstr, 'utf-8')
+        return unicode(outstr, 'utf-8', 'replace')
 
 def processPage(plugin, page, page_format):
     """ Processes a page of data and puts it into the correct format. """
