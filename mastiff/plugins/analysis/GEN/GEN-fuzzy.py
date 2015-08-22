@@ -33,12 +33,11 @@ Output:
 __version__ = "$Id$"
 
 import logging
-import os
 
 try:
     import pydeep
 except ImportError, error:
-    print('Gen-fuzzy: Could not import pydeep: %s' % error)
+    print 'Gen-fuzzy: Could not import pydeep: %s'.format(error)
 
 import mastiff.sqlite as DB
 import sqlite3
@@ -50,6 +49,9 @@ class GenFuzzy(gen.GenericCat):
     def __init__(self):
         """Initialize the plugin."""
         gen.GenericCat.__init__(self)
+        self.page_data.meta['filename'] = 'fuzzy'
+        # we will be adding to the file information hashes, so make sure it runs before us
+        self.prereq = 'File Information'
 
     def analyze(self, config, filename):
         """Analyze the file."""
@@ -69,14 +71,14 @@ class GenFuzzy(gen.GenericCat):
 
         if self.output_db(config, my_fuzzy) is False:
             return False
-        
+
         fuzz_results = list()
         if config.get_bvar(self.name, 'compare') is True:
             fuzz_results = self.compare_hashes(config, my_fuzzy)
-            
+
         self.output_file(config, my_fuzzy, fuzz_results)
 
-        return True
+        return self.page_data
 
     def compare_hashes(self, config, my_fuzzy):
         """
@@ -104,27 +106,37 @@ class GenFuzzy(gen.GenericCat):
         except pydeep.error, err:
             log.error('pydeep error: %s', err)
             return None
-            
+
         return fuzz_results
 
     def output_file(self, config, my_fuzzy, fuzz_results):
         """ Writes output to a file. """
-        
+
         log = logging.getLogger('Mastiff.Plugins.' + self.name + '.output_file')
-        
-        # print out results
-        my_file = open(config.get_var('Dir', 'log_dir') + os.sep + 'fuzzy.txt', 'w')
-        my_file.write('Fuzzy Hash: %s\n\n' % my_fuzzy)
+
+        if self.results['Generic']['File Information'] is None:
+            # File Information is not present, cannot continue
+            log.error('Missing File Information plug-in output. Aborting.')
+            return False
+
+        # add fuzzy hashes to the hashes already generated
+        if self.results['Generic']['File Information'] is not None:
+            # adding a new data onto an existing table
+            my_table = self.results['Generic']['File Information']['File Hashes']
+            my_table.addrow(['Fuzzy Hash', my_fuzzy])
+
+        fuzz_table = self.page_data.addTable('Similar Fuzzy Hashes')
+
         if fuzz_results is not None and len(fuzz_results) > 0:
-            my_file.write('This file is similar to the following files:\n\n')
-            my_file.write('{0:35}\t{1:10}\n'.format('MD5', 'Percent'))
+            fuzz_table.addheader([('MD5', str), ('Percent', str)])
+
             for (md5,  percent) in fuzz_results:
-                my_file.write('{0:35}\t{1:3}\n'.format(md5, percent))
+                fuzz_table.addrow([md5, percent])
         elif config.get_bvar(self.name, 'compare') is True:
             # This only gets printed if we actually compared
-            my_file.write('No other fuzzy hashes were related to this file.\n')
+            fuzz_table.addheader([('Data', str)], printHeader=False)
+            fuzz_table.addrow(['No other fuzzy hashes were related to this file.'])
 
-        my_file.close()
         return True
 
     def output_db(self, config, my_fuzzy):
