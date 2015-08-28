@@ -36,6 +36,7 @@ __version__ = "$Id$"
 import subprocess
 import logging
 import os
+import sys
 
 import mastiff.plugins.category.pdf as pdf
 
@@ -45,6 +46,7 @@ class PDFid(pdf.PDFCat):
     def __init__(self):
         """Initialize the plugin."""
         pdf.PDFCat.__init__(self)
+        self.page_data.meta['filename'] = 'pdf-id'
 
     def analyze(self, config, filename):
         """
@@ -92,28 +94,34 @@ class PDFid(pdf.PDFCat):
                                close_fds=True)
             (output, error) = run.communicate()
         except:
-            log.error('got error')
-            return False
-        if error is not None and len(error) > 0:
-            log.error('Error running program: %s' % error)
+            log.error('Error executing pdfid.py: {}'.format(sys.exc_info()[0]))
             return False
 
-        self.output_file(config.get_var('Dir','log_dir'), output)
+        if error is not None and len(error) > 0:
+            log.error('Error running program: {}'.format(error))
+            return False
+
+        # parse through output
+        if 'PDF Header' in output.split('\n')[1]:
+            # By default, pdfid.py displays the PDF header as the first. This is different enough from the
+            # other data extracted it should be in its own table.
+            header_table = self.page_data.addTable(title='PDF Header')
+            header_table.addheader([('Name', str), ('Value', str)], printHeader=False)
+            header_table.addrow(output.split('\n')[1].lstrip().split(': '))
+
+
+        # grab the rest of the data
+        if 'PDF Header' in output.split('\n')[1]:
+            pdf_objects = [ x.lstrip().split() for x in output.split('\n')[2:] ]
+        else:
+            pdf_objects = [ x.lstrip().split() for x in output.split('\n')[1:] ]
+
+        new_table = self.page_data.addTable(title='PDF Objects')
+        new_table.addheader([('Object___Name', str), ('Count', int)])
+        [ new_table.addrow([my_obj[0], my_obj[1]]) for my_obj in pdf_objects if my_obj ]
+
         log.debug ('Successfully ran %s.', self.name)
 
-        return True
+        return self.page_data
 
-    def output_file(self, outdir, data):
-        """Place the data into a file."""
-        log = logging.getLogger('Mastiff.Plugins.' + self.name)
-
-        try:
-            out_file = open(outdir + os.sep + "pdfid.txt",'w')
-        except IOError, err:
-            log.error('Write error: %s', err)
-            return False
-
-        out_file.write(data)
-        out_file.close()
-        return True
 
