@@ -67,6 +67,7 @@ class GenMastiffOnline(gen.GenericCat):
             
         # send data to MASTIFF Online server
         host = 'mastiff-online.korelogic.com'
+        method = 'https'
         selector="/cgi/dispatcher.cgi/UploadMOSample"
         fields = [('accept_terms_of_service',  'true')]
         file_to_send = open(filename, "rb").read()        
