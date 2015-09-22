@@ -24,7 +24,7 @@ import binascii
     http://code.activestate.com/recipes/146306/
     and are used to allow the uploading of files to multipart forms.
 """
-def post_multipart(host, selector, fields, files):
+def post_multipart(host, method, selector, fields, files):
     """
     Post fields and files to an http host as multipart/form-data.
     fields is a sequence of (name, value) elements for regular form fields.
@@ -32,14 +32,19 @@ def post_multipart(host, selector, fields, files):
     Return the server's response page.
     """
     content_type, body = encode_multipart_formdata(fields, files)
-    h = httplib.HTTP(host)
+    if method.startswith('https') is True:
+        h = httplib.HTTPSConnection(host)
+    else:
+        h = httplib.HTTP(host)
+        
     h.putrequest('POST', selector)
-    h.putheader('content-type', content_type)
-    h.putheader('content-length', str(len(body)))
+    h.putheader("User-Agent", 'MASTIFF Statis Analysis Framework')
+    h.putheader('Content-Type', content_type)
+    h.putheader('Content-Length', str(len(body)))
     h.endheaders()
     h.send(body)
-    errcode, errmsg, headers = h.getreply()
-    return h.file.read()
+    myresponse = h.getresponse().read()
+    return myresponse
 
 def encode_multipart_formdata(fields, files):
     """
@@ -47,7 +52,7 @@ def encode_multipart_formdata(fields, files):
     files is a sequence of (name, filename, value) elements for data to be uploaded as files
     Return (content_type, body) ready for httplib.HTTP instance
     """
-    BOUNDARY = '----------ThIs_Is_tHe_bouNdaRY_$'
+    BOUNDARY = '----------MASTIFF_STATIC_ANALYSIS_FRAMEWORK$'
     CRLF = '\r\n'
     L = []
     for (key, value) in fields:

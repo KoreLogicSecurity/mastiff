@@ -133,12 +133,13 @@ class GenVT(gen.GenericCat):
 
         # send file to VT
         host = "www.virustotal.com"
-        selector = "https://www.virustotal.com/vtapi/v2/file/scan"
+        method = 'https'
+        selector = "/vtapi/v2/file/scan"
         fields = [("apikey", config.get_var(self.name, 'api_key'))]
         file_to_send = open(filename, "rb").read()
         files = [("file", os.path.basename(filename), file_to_send)]
         try:
-            json = simplejson.loads(plugins.post_multipart(host, selector,
+            json = simplejson.loads(plugins.post_multipart(host, method, selector,
                                                            fields, files))
         except socket.error, err:
             log.error('Unable to send file: %s' % err)
