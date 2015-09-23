@@ -58,6 +58,12 @@ class GenMastiffOnline(gen.GenericCat):
         log = logging.getLogger('Mastiff.Plugins.' + self.name)
         log.info('Starting execution.')
         
+        # get terms of service acceptance
+        tos = config.get_bvar(self.name,  'accept_terms_of_service')
+        if tos is None or tos is False:
+            log.info('Terms of service not accepted. Accept to enable MASTIFF Online submission.')
+            return self.page_data
+        
         myjson = None
         
         submit = config.get_bvar(self.name,  'submit')
